@@ -1,4 +1,4 @@
-(in-package :cepl)
+(in-package :cepl.examples)
 
 (defparameter *tex* nil)
 (defparameter *stream* nil)
