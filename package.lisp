@@ -1,5 +1,11 @@
 ;;;; package.lisp
 
+;; helper packages
+
+(defpackage #:cepl.examples.misc
+  (:use #:cl #:cepl)
+  (:export :*examples-dir*))
+
 (defpackage #:cepl.examples.camera
   (:use #:cl #:cepl)
   (:export :camera
@@ -20,8 +26,13 @@
            :world->cam
            :make-cam-clip-matrix))
 
+;; packages used in the examples
+
 (defpackage #:cepl.examples
-  (:use #:cl #:cepl))
+  (:use #:cl #:cepl #:cepl.examples.misc
+	#:varjo-lang))
 
 (defpackage #:cepl.examples+camera
-  (:use #:cl #:cepl #:cepl.examples.camera))
+  (:use #:cl #:cepl #:cepl.examples.camera
+	#:cepl.examples.misc
+	#:varjo-lang))

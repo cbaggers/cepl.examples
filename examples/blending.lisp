@@ -1,4 +1,4 @@
-(in-package :cepl)
+(in-package :cepl.examples+camera)
 
 ;;- - - - - - - - - - - - - - - - - -
 
@@ -63,7 +63,7 @@
 ;;- - - - - - - - - - - - - - - - - -
 
 (defun init ()
-  (destructuring-bind (d i) (primitives:box-data)
+  (destructuring-bind (d i) (dendrite.primitives:box-data)
     (setf box-data (make-gpu-array d :element-type 'g-pnt)
           box-index (make-gpu-array i :element-type :ushort)
           box-stream (make-buffer-stream box-data :index-array box-index)

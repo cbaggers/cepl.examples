@@ -5,10 +5,17 @@
 ;; by the terms of the Lisp Lesser GNU Public License
 ;; (http://opensource.franz.com/preamble.html),
 ;; known as the LLGPL.
-
-;; This is stub
-;; I'm popping these function here as we will eventually need
-;; some kind of abstraction aroudn the idea of 'cameras'
+;;
+;; ======================================================
+;; This is an example camera class.
+;; It doesnt so much special and isnt very optimized but
+;; it exists to show that cepl doesnt require you to use
+;; the cepl.camera library to make a camera.
+;;
+;; This camera also doesnt use the 'space type from cepl
+;; so this shows what code looks like without that
+;; feature
+;; ======================================================
 
 (in-package :cepl.examples.camera)
 
