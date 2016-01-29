@@ -30,9 +30,9 @@
 
 (defpackage #:cepl.examples
   (:use #:cl #:cepl #:cepl.examples.misc
-	#:varjo-lang))
+	#:cl-game-math #:varjo-lang))
 
 (defpackage #:cepl.examples+camera
   (:use #:cl #:cepl #:cepl.examples.camera
 	#:cepl.examples.misc
-	#:varjo-lang))
+	#:cl-game-math #:varjo-lang))

@@ -1,4 +1,4 @@
-(in-package :cepl)
+(in-package :cepl.examples)
 
 (defvar field-a nil)
 (defvar field-b nil)
@@ -7,23 +7,23 @@
   (values (v! (pos vert) 1) (tex vert)))
 
 (defun-g pass-through-frag ((tc :vec2) &uniform (board :sampler-2d))
-  (let ((c (x (texture board tc))))
+  (let ((c (v:x (texture board tc))))
     (v! c 0 c 0)))
 
-(defun-g the-meat! ((tc :vec2) &uniform (board :sampler-2d))
+ (defun-g the-meat! ((tc :vec2) &uniform (board :sampler-2d))
   (let* ((offset (/ 1.0 1024.0))
-         (score (x (+ (texture board (+ tc (v! (- offset) (- offset))))
-                      (texture board (+ tc (v! (- offset)  0)))
-                      (texture board (+ tc (v! (- offset)  offset)))
-                      (texture board (+ tc (v!  0 (- offset))))
-                      (texture board (+ tc (v!  0  offset)))
-                      (texture board (+ tc (v!  offset (- offset))))
-                      (texture board (+ tc (v!  offset  0)))
-                      (texture board (+ tc (v!  offset  offset))))))
+	 (score (v:x (+ (texture board (+ tc (v! (- offset) (- offset))))
+			(texture board (+ tc (v! (- offset)  0)))
+			(texture board (+ tc (v! (- offset)  offset)))
+			(texture board (+ tc (v!  0 (- offset))))
+			(texture board (+ tc (v!  0  offset)))
+			(texture board (+ tc (v!  offset (- offset))))
+			(texture board (+ tc (v!  offset  0)))
+			(texture board (+ tc (v!  offset  offset))))))
          (current (texture board tc)))
     (cond
       ((or (< score 2) (> score 3)) (v! 0 0 0 0))
-      ((and (= score 3) (= (x current) 0)) (v! 1 0 0 0))
+      ((and (= score 3) (= (v:x current) 0)) (v! 1 0 0 0))
       (t current))))
 
 (defpipeline copy-pass () (g-> #'pass-through-vert #'pass-through-frag))
@@ -54,6 +54,19 @@
   (game-o-life)
   (jungl:update-display))
 
-;; this macro is a lazy way to get a function called on start (:init)
-;; and a function called every
-(live:main-loop :init init_ :step step-main)
+(let ((live::running nil))
+  (defun run-loop ()
+    (init_)
+    (setf live::running t)
+    (format t "-starting-")
+    (loop :while live::running
+       :do (continuable
+	     (update-swank)
+	     (cepl.events:pump-events)
+	     (step-main)))
+    (print "-shutting down-")
+    nil)
+  (defun stop-loop () (setf live::running nil)))
+
+(evt:def-named-event-node sys-listener (e evt:|sys|)
+  (when (typep e 'evt:will-quit) (stop-loop)))
