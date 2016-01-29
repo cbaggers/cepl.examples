@@ -1,5 +1,5 @@
 ;; fragment point light - unfinished
-(in-package :cepl)
+(in-package :cepl.examples+camera)
 
 ;; NOTE: Ensure you have loaded cepl-image-helper & cepl-model-helper
 ;;       (or just load cepl-default)
@@ -45,7 +45,7 @@
   (setf *wibble* (load-model "./bird/bird.3ds" (v! pi 0 0)))
   (setf *tex* (devil-helper:load-image-to-texture "./bird/char_bird_col.png"))
   (setf *pos-tex* (make-texture nil :dimensions 1000
-                                :internal-format :rgba32f
+                                :element-type :rgba32f
                                 :buffer-storage t))
   (push-g (loop :for i :below 1000 :collect
               (v! (- (random 20.0) 10) (- (random 20.0) 10)
@@ -124,10 +124,10 @@
 
 (defun reshape (&optional (new-dimensions (current-viewport)))
   (setf (frame-size *camera*) new-dimensions)
-  (instanced-birds nil :cam-to-clip (cam->clip *camera*)))
+  (map-g #'instanced-birds nil :cam-to-clip (cam->clip *camera*)))
 
 (def-named-event-node window-listener (e evt:|window|)
-  (when (eq (evt:action e) :resized) (reshape (data e))))
+  (when (eq (evt:action e) :resized) (reshape (evt:data e))))
 
 ;;--------------------------------------------------------------
 ;; main loop
