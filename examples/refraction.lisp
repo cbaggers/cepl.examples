@@ -1,5 +1,5 @@
 ;; Simple refraction example
-(in-package :cepl)
+(in-package :cepl.examples+camera)
 
 ;; NOTE: Ensure you have loaded cepl-image-helper & cepl-model-helper
 ;;       (or just load cepl-default)
@@ -148,14 +148,14 @@
 
 (evt:def-named-event-node mouse-listener (e evt:|mouse|)
   (when (typep e 'evt:mouse-motion)
-    (when (eq (evt:mouse-button-state |mouse| :left) :down)
+    (when (eq (evt:mouse-state :left) :down)
       (let ((d (evt:delta e)))
         (cond
-          ((eq (evt:key-state |keyboard| :lctrl) :down)
+          ((eq (evt:key-state :lctrl) :down)
            (v3:incf (pos *bird*) (v! (/ (v:x d) 480.0)
                                      (/ (v:y d) -640.0)
                                      0)))
-          ((eq (evt:key-state |keyboard| :lshift) :down)
+          ((eq (evt:key-state :lshift) :down)
            (v3:incf (pos *bird*) (v! 0 0 (/ (v:y d) 300.0))))
           (t
            (setf (rot *bird*) (v:+ (rot *bird*) (v! (/ (v:y d) -100.0)
@@ -167,8 +167,8 @@
 
 (defun reshape (&optional (new-dimensions (current-viewport)))
   (setf (frame-size *camera*) new-dimensions)
-  (standard-pass nil :cam-to-clip (cam->clip *camera*))
-  (refract-pass nil :cam-to-clip (cam->clip *camera*)))
+  (map-g #'standard-pass nil :cam-to-clip (cam->clip *camera*))
+  (map-g #'refract-pass nil :cam-to-clip (cam->clip *camera*)))
 
 (def-named-event-node window-listener (e evt:|window|)
   (when (eq (evt:action e) :resized)
