@@ -1,4 +1,4 @@
-(in-package :cepl)
+(in-package :cepl.examples)
 
 (defparameter *array* nil)
 (defparameter *ubo* nil)
@@ -21,7 +21,7 @@
 (defun step-demo ()
   (evt:pump-events)
   (update-swank)
-  (gl:clear :color-buffer-bit)
+  (gl:clear :color-buffer-bit :depth-buffer-bit)
   (map-g #'prog-1 *stream* :hmm *ubo*)
   (update-display))
 
@@ -33,7 +33,7 @@
                                       (list (v! -0.5 -0.36 0) (v! 0 0 1 1)))
                                 :element-type 'g-pc)
         *stream* (make-buffer-stream *array*))
-  (prog-1 nil :hmm *ubo*)
+  (map-g #'prog-1 nil :hmm *ubo*)
   (loop :while *running* :do (continuable (step-demo))))
 
 (defun stop-loop ()
