@@ -1,4 +1,4 @@
-(in-package :cepl)
+(in-package :cepl.examples)
 
 ;; NOTE: Ensure you have loaded cepl-image-helper (or cepl-default)
 
