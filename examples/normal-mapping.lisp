@@ -1,8 +1,4 @@
-;; fragment point light - unfinished
-(in-package :cepl)
-
-;; NOTE: Ensure you have loaded cepl-image-helper & cepl-model-helper
-;;       (or just load cepl-default)
+(in-package :cepl.examples+camera)
 
 ;;--------------------------------------------------------------
 ;; setup
@@ -43,9 +39,12 @@
   (setf *light* (make-instance 'light))
   (setf *camera* (make-camera))
   (reshape (current-viewport))
-  (setf *wibble* (load-model "./wibble.3ds" (v! pi 0 0)))
-  (setf *tex* (devil-helper:load-image-to-texture "./brick/col.png"))
-  (setf *normal-map* (devil-helper:load-image-to-texture "./brick/norm.png")))
+  (let ((wibble-path (merge-pathnames "./wibble.3ds" *examples-dir*))
+	(brick-dif-path  (merge-pathnames "./brick/col.png" *examples-dir*))
+	(brick-norm-path  (merge-pathnames "./brick/norm.png" *examples-dir*)))
+    (setf *wibble* (load-model wibble-path (v! pi 0 0)))
+    (setf *tex* (devil-helper:load-image-to-texture brick-dif-path))
+    (setf *normal-map* (devil-helper:load-image-to-texture brick-norm-path))))
 
 ;;--------------------------------------------------------------
 ;; drawing
@@ -104,7 +103,7 @@
 
 (evt:def-named-event-node mouse-listener (e evt:|mouse|)
   (when (and (typep e 'evt:mouse-motion)
-             (eq (evt:mouse-button-state :left) :down))
+             (eq (evt:mouse-state :left) :down))
     (let ((d (evt:delta e)))
       (cond
         ((eq (evt:key-state :lshift) :down)
@@ -124,10 +123,10 @@
 
 (defun reshape (&optional (new-dimensions (current-viewport)))
   (setf (frame-size *camera*) new-dimensions)
-  (frag-point-light nil :cam-to-clip (cam->clip *camera*)))
+  (map-g #'frag-point-light nil :cam-to-clip (cam->clip *camera*)))
 
 (def-named-event-node window-listener (e evt:|window|)
-  (when (eq (action e) :resized) (reshape (data e))))
+  (when (eq (evt:action e) :resized) (reshape (evt:data e))))
 
 ;;--------------------------------------------------------------
 ;; main loop
