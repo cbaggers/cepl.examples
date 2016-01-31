@@ -1,4 +1,4 @@
-(in-package :cepl)
+(in-package :cepl.examples+camera)
 
 ;; NOTE: Ensure you have loaded cepl-image-helper (or cepl-default)
 
@@ -20,7 +20,7 @@
                                (devil-helper:load-image-to-c-array
                                 (merge-pathnames p *examples-dir*)))
                              paths))
-    (make-texture ca :internal-format :rgb8 :cubes t)))
+    (make-texture ca :element-type :rgb8 :cubes t)))
 
 (defun init ()
   (setf tx (make-cubemap-tex "ThickCloudsWater/left.png"
@@ -29,9 +29,9 @@
                              "ThickCloudsWater/down.png"
                              "ThickCloudsWater/front.png"
                              "ThickCloudsWater/back.png"))
-  (let* ((bx (primitives:box-data))
+  (let* ((bx (dendrite.primitives:box-data))
          (data (make-gpu-array (first bx) :element-type 'g-pnt))
-         (ind (make-gpu-array (primitives:swap-winding-order (second bx))
+         (ind (make-gpu-array (dendrite.primitives:swap-winding-order (second bx))
                               :element-type :ushort)))
     (setf strm (make-buffer-stream data :index-array ind
                                    :retain-arrays t)))
@@ -53,4 +53,19 @@
                           (sin (v:y mouse-ang))
                           (cos (v:x mouse-ang)))))))
 
-(live:main-loop :init init :step step-demo)
+(let ((live::running nil))
+  (defun run-loop ()
+    (init)
+    (setf live::running t)
+    (format t "-starting-")
+    (loop :while live::running
+       :do (continuable
+	     (update-swank)
+	     (cepl.events:pump-events)
+	     (step-demo)))
+    (print "-shutting down-")
+    nil)
+  (defun stop-loop () (setf live::running nil)))
+
+(evt:def-named-event-node sys-listener (e evt:|sys|)
+  (when (typep e 'evt:will-quit) (stop-loop)))
