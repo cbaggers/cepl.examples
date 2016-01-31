@@ -1,4 +1,6 @@
-;; Raymarcher!
+(in-package #:cepl.examples)
+
+;; Simple Raymarcher
 
 (defparameter *gpu-array* nil)
 (defparameter *vertex-stream* nil)
@@ -34,6 +36,25 @@
 (defun-g ray-vert ((position :vec4))
   (values position
           (swizzle position :xy)))
+
+(varjo::defshader ray-frag2 ((posxy :vec2) &uniform (loop :float) (eye-pos :vec3))
+  (let* ((eye-pos (v! 0.0 0.0 -5.0))
+         (eye-dir (normalize (v! (x posxy) (y posxy) 1.0)))
+         (e eye-pos)
+         (output (v! 0.0 0.0 0.0)))
+    (for (i 0) (< i 20) (++ i)
+         (let ((d (thing2 e 1.4 loop)))
+           (%if (<= d 0.0)
+                (let ((norm (density-normal (thing2 e 1.4 loop) 0)))
+                  (setf output (v! (+ 0.3 (* 0.5 (y norm)))
+                                   0.0
+                                   (+ 0.5 (* 0.2 (mix (y norm) (x norm)
+                                                      (sin (* 1.0 loop))))) ))
+                  (break)))
+           (setf d (max d 0.01))
+           (setf e (+ e (* eye-dir d)))))
+    (v! output 1.0)))
+
 
 (defun-g ray-frag ((posxy :vec2) &uniform (loop :float) (eye-pos :vec3))
   (let* ((eye-pos (v! 0.0 0.0 -5.0))

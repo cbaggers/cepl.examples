@@ -10,7 +10,7 @@
   (let ((c (v:x (texture board tc))))
     (v! c 0 c 0)))
 
- (defun-g the-meat! ((tc :vec2) &uniform (board :sampler-2d))
+(defun-g the-meat! ((tc :vec2) &uniform (board :sampler-2d))
   (let* ((offset (/ 1.0 1024.0))
 	 (score (v:x (+ (texture board (+ tc (v! (- offset) (- offset))))
 			(texture board (+ tc (v! (- offset)  0)))
