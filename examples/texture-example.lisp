@@ -1,5 +1,5 @@
 ;; Texturing and fragment effects
-(in-package :cepl)
+(in-package :cepl.examples)
 
 (defparameter *count* 0.0)
 (defparameter *texture* nil)
