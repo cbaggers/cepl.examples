@@ -98,7 +98,7 @@
 
 (defun make-camera (&optional (frame (jungl:current-viewport))
                       (near 1.0) (far 1000.0) (fov 120.0)
-                      (cam->clip-function #'cl-game-math.projection:perspective))
+                      (cam->clip-function #'rtg-math.projection:perspective))
   (let* ((frame
           (etypecase frame
             ((simple-array single-float (2)) (list (aref frame 0)
