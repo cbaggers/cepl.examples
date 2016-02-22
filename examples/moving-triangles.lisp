@@ -27,15 +27,15 @@
     (g-> #'vert #'frag))
 
 (defun step-demo ()
-  (evt:pump-events)
-  (update-swank)
+  (step-host)
+  (update-repl-link)
   (setf *loop* (+ 0.004 *loop*))
-  (gl:clear :color-buffer-bit :depth-buffer-bit)
+  (clear)
   (ttm:update)
   (loop :for i :below 100 :do
      (let ((i (/ i 2.0)))
        (map-g #'prog-1 *vertex-stream* :i i)))
-  (update-display))
+  (swap))
 
 (let ((running nil))
   (defun run-loop ()
@@ -46,8 +46,6 @@
                                   :element-type :vec4
                                   :dimensions 3))
     (setf *vertex-stream* (make-buffer-stream *array*))
-    (loop :while running :do (continuable (step-demo))))
+    (loop :while (and running (not (shutting-down-p))) :do
+       (continuable (step-demo))))
   (defun stop-loop () (setf running nil)))
-
-(evt:def-named-event-node sys-listener (e evt:|sys|)
-  (when (typep e 'evt:will-quit) (stop-loop)))

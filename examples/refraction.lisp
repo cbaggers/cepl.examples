@@ -30,16 +30,18 @@
 (defun load-model (file-path nth-mesh &optional hard-rotate)
   (let* ((imp-mesh (elt (classimp:meshes (classimp:import-into-lisp file-path))
                         nth-mesh))
-         (result (model-parsers:mesh->gpu imp-mesh))
-         (mesh (make-instance 'meshes:mesh
+         (result (cepl.examples.model-parsers:mesh->gpu imp-mesh))
+         (mesh (make-instance 'cepl.examples.meshes:mesh
                               :primitive-type :triangles
                               :vertices (first result)
                               :index (second result)))
          (mesh~1 (if hard-rotate
-                     (meshes:transform-mesh mesh :rotation hard-rotate)
+                     (cepl.examples.meshes:transform-mesh
+		      mesh :rotation hard-rotate)
                      mesh)))
     (let ((gstream (make-buffer-stream
-                    (meshes:vertices mesh) :index-array (meshes:indicies mesh))))
+                    (cepl.examples.meshes:vertices mesh)
+		    :index-array (cepl.examples.meshes:indicies mesh))))
       (make-instance 'entity :rot (v! 1.57079633 1 0) :gstream gstream
                      :pos (v! 0 -0.4 -1) :mesh mesh~1))))
 
@@ -50,11 +52,11 @@
                              0 (v! pi 0 0)))
   (setf (v:z (pos *wibble*)) -3.0)
   (setf *bird* (load-model (merge-pathnames "bird/bird.3ds" *examples-dir*) 1 (v! pi 0 0)))
-  (setf *bird-tex* (devil-helper:load-image-to-texture
+  (setf *bird-tex* (cepl.devil:load-image-to-texture
                     (merge-pathnames "water.jpg" *examples-dir*)))
-  (setf *bird-tex2* (devil-helper:load-image-to-texture
+  (setf *bird-tex2* (cepl.devil:load-image-to-texture
                      (merge-pathnames "bird/char_bird_col.png" *examples-dir*)))
-  (setf *wib-tex* (devil-helper:load-image-to-texture
+  (setf *wib-tex* (cepl.devil:load-image-to-texture
                    (merge-pathnames "brick/col.png" *examples-dir*))))
 
 ;;--------------------------------------------------------------
@@ -120,47 +122,50 @@
   :fbos (scene :c :d))
 
 (defun draw ()
-  (gl:clear :color-buffer-bit :depth-buffer-bit)
+  (clear)
   (let* ((world-to-cam-matrix (world->cam *camera*))
-         (cam-light-vec (m4:mcol*vec4 (entity-matrix *wibble*)
-                                      (v! (pos *light*) 1.0))))
+         (cam-light-vec (m4:*v (entity-matrix *wibble*)
+			       (v! (pos *light*) 1.0))))
     (map-g #'standard-pass (gstream *wibble*)
-          :textur *wib-tex*
-          :ambient-intensity (v! 0.2 0.2 0.2 1.0)
-          :light-intensity (v! 1 1 1 0)
-          :model-space-light-pos (v:s~ cam-light-vec :xyz)
-          :model-to-cam (m4:m* world-to-cam-matrix (entity-matrix *wibble*)))
+	   :textur *wib-tex*
+	   :ambient-intensity (v! 0.2 0.2 0.2 1.0)
+	   :light-intensity (v! 1 1 1 0)
+	   :model-space-light-pos (v:s~ cam-light-vec :xyz)
+	   :model-to-cam (m4:* world-to-cam-matrix (entity-matrix *wibble*)))
     (map-g #'two-pass (gstream *wibble*) (gstream *bird*)
-          :model-to-cam (m4:m* world-to-cam-matrix (entity-matrix *wibble*))
-          :model-to-cam2 (m4:m* world-to-cam-matrix (entity-matrix *bird*))
-          :model-space-light-pos (v:s~ cam-light-vec :xyz)))
-  (update-display))
+	   :model-to-cam (m4:* world-to-cam-matrix (entity-matrix *wibble*))
+	   :model-to-cam2 (m4:* world-to-cam-matrix (entity-matrix *bird*))
+	   :model-space-light-pos (v:s~ cam-light-vec :xyz)))
+  (swap))
 
 
 
 (defun entity-matrix (entity)
-  (reduce #'m4:m* (list (m4:translation (pos entity))
-                        (m4:rotation-from-euler (rot entity))
-                        (m4:scale (scale entity)))))
+  (reduce #'m4:* (list (m4:translation (pos entity))
+		       (m4:rotation-from-euler (rot entity))
+		       (m4:scale (scale entity)))))
 
 ;;--------------------------------------------------------------
 ;; controls
 
-(evt:def-named-event-node mouse-listener (e evt:|mouse|)
-  (when (typep e 'evt:mouse-motion)
-    (when (eq (evt:mouse-state :left) :down)
-      (let ((d (evt:delta e)))
-        (cond
-          ((eq (evt:key-state :lctrl) :down)
-           (v3:incf (pos *bird*) (v! (/ (v:x d) 480.0)
-                                     (/ (v:y d) -640.0)
-                                     0)))
-          ((eq (evt:key-state :lshift) :down)
-           (v3:incf (pos *bird*) (v! 0 0 (/ (v:y d) 300.0))))
-          (t
-           (setf (rot *bird*) (v:+ (rot *bird*) (v! (/ (v:y d) -100.0)
-                                                    (/ (v:x d) -100.0)
-                                                    0.0)))))))))
+(defun mouse-callback (event timestamp)
+  (declare (ignore timestamp))
+  (when (skitter:mouse-down-p mouse.left)
+    (let ((d (skitter:xy-pos-relative event)))
+      (cond
+	;; move in z axis
+	((skitter:key-down-p key.lshift)
+	 (setf (pos *bird*)
+	       (v3:+ (pos *bird*) (v! 0 0 (/ (v:y d) 100.0)))))
+	;; move in y axis
+	((skitter:key-down-p key.lctrl)
+	 (setf (pos *bird*)
+	       (v3:+ (pos *bird*) (v! 0 (/ (v:y d) -100.0) 0))))
+	;; rotate
+	(t (setf (rot *bird*)
+		 (v3:+ (rot *bird*) (v! (/ (v:y d) -100.0)
+					(/ (v:x d) -100.0)
+					0.0))))))))
 
 ;;--------------------------------------------------------------
 ;; window
@@ -170,9 +175,9 @@
   (map-g #'standard-pass nil :cam-to-clip (cam->clip *camera*))
   (map-g #'refract-pass nil :cam-to-clip (cam->clip *camera*)))
 
-(def-named-event-node window-listener (e evt:|window|)
-  (when (eq (evt:action e) :resized)
-    (reshape (evt:data e))))
+(defun window-size-callback (event timestamp)
+  (declare (ignore timestamp))
+  (reshape (skitter:size-2d-vec event)))
 
 ;;--------------------------------------------------------------
 ;; main loop
@@ -181,17 +186,18 @@
   (defun run-loop ()
     (init)
     (setf running t)
-    (loop :while running :do
-       (continuable
-         (step-demo)
-         (update-swank))))
+    (skitter:whilst-listening-to
+	((#'window-size-callback (skitter:window 0) :size)
+	 (#'mouse-callback (skitter:mouse 0) :pos))
+      (loop :while (and running (not (shutting-down-p))) :do
+	 (continuable
+	   (step-demo)
+	   (update-repl-link)))))
   (defun stop-loop () (setf running nil)))
 
-(evt:def-named-event-node sys-listener (e evt:|sys|)
-  (when (typep e 'evt:will-quit) (stop-loop)))
 
 (defun step-demo ()
-  (evt:pump-events)
+  (step-host)
   (setf *loop-pos* (+ *loop-pos* 0.04))
   (setf (pos *light*) (v! (* 10 (sin (* 0.01 *loop-pos*)))
                           10

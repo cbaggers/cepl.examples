@@ -9,7 +9,7 @@
 
 (defstruct box
   (pos (v! 0 0 -10))
-  (rot (q:identity-quat)))
+  (rot (q:identity)))
 
 (defvar box-a (make-box :pos (v! 0 0 -5)))
 (defvar box-b (make-box :pos (v! 0.3 0 -3)))
@@ -17,13 +17,13 @@
 ;;- - - - - - - - - - - - - - - - - -
 
 (defun model->world (x)
-  (m4:m* (m4:translation (box-pos x)) (q:to-matrix4 (box-rot x))))
+  (m4:* (m4:translation (box-pos x)) (q:to-mat4 (box-rot x))))
 
 (defun world->clip (c)
-  (m4:m* (cam->clip c) (world->cam c)))
+  (m4:* (cam->clip c) (world->cam c)))
 
 (defun model->clip (m c)
-  (m4:m* (world->clip c) (model->world m)))
+  (m4:* (world->clip c) (model->world m)))
 
 ;;- - - - - - - - - - - - - - - - - -
 
@@ -45,9 +45,9 @@
 
 (defun step-demo ()
   (incf factor 0.02)
-  (setf (box-rot box-a) (q:make-quat-from-axis-angle
+  (setf (box-rot box-a) (q:from-axis-angle
                          (v! (sin factor) (cos factor) 1) 10)
-        (box-rot box-b) (q:make-quat-from-axis-angle
+        (box-rot box-b) (q:from-axis-angle
                          (v! (sin (/ factor 5)) (cos (/ factor -3)) 1) 10))
   (clear)
   (map-g #'draw-box box-stream
@@ -58,7 +58,7 @@
            :model->clip (model->clip box-b camera)
            :tex brick
            :fac (+ 0.7 (* (sin factor) 0.3))))
-  (update-display))
+  (swap))
 
 ;;- - - - - - - - - - - - - - - - - -
 
@@ -67,18 +67,15 @@
     (setf box-data (make-gpu-array d :element-type 'g-pnt)
           box-index (make-gpu-array i :element-type :ushort)
           box-stream (make-buffer-stream box-data :index-array box-index)
-          brick (devil-helper:load-image-to-texture
+          brick (cepl.devil:load-image-to-texture
                  (merge-pathnames "brick/col.png" *examples-dir*)))))
 
 (let ((running t))
   (defun run-loop ()
     (init)
-    (loop :while running :do
+    (loop :while (and running (not (shutting-down-p))) :do
        (continuable
-         (evt:pump-events)
-         (update-swank)
+         (step-host)
+         (update-repl-link)
          (step-demo))))
   (defun stop-loop () (setf running nil)))
-
-(evt:def-named-event-node sys-listener (e evt:|sys|)
-  (when (typep e 'evt:will-quit) (stop-loop)))

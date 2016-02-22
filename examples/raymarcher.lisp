@@ -88,16 +88,15 @@
                                       :dimensions 6))
     (setf *vertex-stream* (make-buffer-stream *gpu-array*))
     (setf running t)
-    (loop :while running :do (continuable (draw))))
+    (loop :while (and running (not (shutting-down-p))) :do
+       (continuable (draw))))
   (defun stop-loop () (setf running nil)))
 
-(evt:def-named-event-node sys-listener (e evt:|sys|)
-  (when (typep e 'evt:will-quit) (stop-loop)))
 
 (defun draw ()
-  (evt:pump-events)
-  (update-swank)
+  (step-host)
+  (update-repl-link)
   (setf *loop* (+ 0.01 *loop*))
-  (gl:clear :color-buffer-bit :depth-buffer-bit)
+  (clear)
   (map-g #'raymarcher *vertex-stream* :loop *loop* :eye-pos (v! 0 0 -5))
-  (update-display))
+  (swap))

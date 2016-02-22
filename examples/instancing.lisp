@@ -26,16 +26,17 @@
    (radius :initform 1.0 :initarg :radius :accessor radius)))
 
 (defun load-model (filename &optional hard-rotate)
-  (let* ((result (second (model-parsers:load-file filename)))
-         (mesh (make-instance 'meshes:mesh
+  (let* ((result (second (cepl.examples.model-parsers:load-file filename)))
+         (mesh (make-instance 'cepl.examples.meshes:mesh
                               :primitive-type :triangles
                               :vertices (first result)
                               :index (second result)))
          (mesh~1 (if hard-rotate
-                     (meshes:transform-mesh mesh :rotation hard-rotate)
+                     (cepl.examples.meshes:transform-mesh mesh :rotation hard-rotate)
                      mesh)))
     (let ((gstream (make-buffer-stream
-                    (meshes:vertices mesh) :index-array (meshes:indicies mesh))))
+		    (cepl.examples.meshes:vertices mesh)
+		    :index-array (cepl.examples.meshes:indicies mesh))))
       (make-instance 'entity :rot (v! 1.57079633 1 0) :gstream gstream
                      :pos (v! 0 -0.4 -1) :mesh mesh~1))))
 
@@ -43,14 +44,14 @@
   (setf *light* (make-instance 'light))
   (setf *camera* (make-camera))
   (setf *wibble* (load-model "./bird/bird.3ds" (v! pi 0 0)))
-  (setf *tex* (devil-helper:load-image-to-texture "./bird/char_bird_col.png"))
+  (setf *tex* (cepl.devil:load-image-to-texture "./bird/char_bird_col.png"))
   (setf *pos-tex* (make-texture nil :dimensions 1000
                                 :element-type :rgba32f
                                 :buffer-storage t))
   (push-g (loop :for i :below 1000 :collect
-              (v! (- (random 20.0) 10) (- (random 20.0) 10)
-                  (- -20 (random 10.0)) 1))
-           *pos-tex*))
+	     (v! (- (random 20.0) 10) (- (random 20.0) 10)
+		 (- -20 (random 10.0)) 1))
+	  *pos-tex*))
 
 ;;--------------------------------------------------------------
 ;; drawing
@@ -67,10 +68,10 @@
           (tex data)))
 
 (defun-g instance-frag ((model-space-pos :vec3) (vertex-normal :vec3)
-                  (diffuse-color :vec4) (tex-coord :vec2) &uniform
-                  (model-space-light-pos :vec3) (light-intensity :vec4)
-                  (ambient-intensity :vec4) (textur :sampler-2d)
-                  (norm-map :sampler-2d))
+			(diffuse-color :vec4) (tex-coord :vec2) &uniform
+			(model-space-light-pos :vec3) (light-intensity :vec4)
+			(ambient-intensity :vec4) (textur :sampler-2d)
+			(norm-map :sampler-2d))
   (let* ((light-dir (normalize (- model-space-light-pos
                                   model-space-pos)))
          (t-norm (- (* (s~ (texture norm-map tex-coord) :xyz) 2)
@@ -86,18 +87,18 @@
   :post #'reshape)
 
 (defun entity-matrix (entity)
-  (reduce #'m4:m* (list (m4:translation (pos entity))
-                        (m4:rotation-from-euler (rot entity))
-                        (m4:scale (scale entity)))))
+  (reduce #'m4:* (list (m4:translation (pos entity))
+		       (m4:rotation-from-euler (rot entity))
+		       (m4:scale (scale entity)))))
 
 (defun draw ()
-  (gl:clear :color-buffer-bit :depth-buffer-bit)
+  (clear)
   (let* ((world-to-cam-matrix (world->cam *camera*))
-         (model-to-cam-matrix (m4:m* world-to-cam-matrix
-                                     (entity-matrix *wibble*)))
+         (model-to-cam-matrix (m4:* world-to-cam-matrix
+				    (entity-matrix *wibble*)))
          ;;(normal-to-cam-matrix (m4:to-matrix3 model-to-cam-matrix))
-         (cam-light-vec (m4:mcol*vec4 (entity-matrix *wibble*)
-                                      (v! (pos *light*) 1.0))))
+         (cam-light-vec (m4:*v (entity-matrix *wibble*)
+			       (v! (pos *light*) 1.0))))
     (with-instances 1000
       (map-g #'instanced-birds (gstream *wibble*)
              :model-space-light-pos (v:s~ cam-light-vec :xyz)
@@ -107,17 +108,17 @@
              :ambient-intensity (v! 0.2 0.2 0.2 1.0)
              :textur *tex*
              :offsets *pos-tex*)))
-  (update-display))
+  (swap))
 
 ;;--------------------------------------------------------------
 ;; controls
 
-(evt:def-named-event-node mouse-listener (e evt:|mouse|)
-  (when (typep e 'evt:mouse-motion)
-    (let ((d (evt:delta e)))
-      (setf (rot *wibble*) (v:+ (rot *wibble*) (v! (/ (v:y d) -100.0)
-                                                   (/ (v:x d) -100.0)
-                                                   0.0))))))
+(defun mouse-callback (event timestamp)
+  (declare (ignore timestamp))
+  (let ((d (skitter:xy-pos-relative event)))
+    (setf (rot *wibble*) (v:+ (rot *wibble*) (v! (/ (v:y d) -100.0)
+						 (/ (v:x d) -100.0)
+						 0.0)))))
 
 ;;--------------------------------------------------------------
 ;; window
@@ -126,8 +127,9 @@
   (setf (frame-size *camera*) new-dimensions)
   (map-g #'instanced-birds nil :cam-to-clip (cam->clip *camera*)))
 
-(def-named-event-node window-listener (e evt:|window|)
-  (when (eq (evt:action e) :resized) (reshape (evt:data e))))
+(defun window-size-callback (event timestamp)
+  (declare (ignore timestamp))
+  (reshape (skitter:size-2d-vec event)))
 
 ;;--------------------------------------------------------------
 ;; main loop
@@ -136,16 +138,17 @@
   (defun run-loop ()
     (init)
     (setf running t)
-    (loop :while running :do
-       (continuable
-         (step-demo)
-         (update-swank))))
-  (defun stop-loop () (setf running nil))
-  (evt:def-named-event-node sys-listener (e evt:|sys|)
-    (when (typep e 'evt:will-quit) (stop-loop))))
+    (skitter:whilst-listening-to
+	((#'window-size-callback (skitter:window 0) :size)
+	 (#'mouse-callback (skitter:mouse 0) :pos))
+      (loop :while (and running (not (shutting-down-p))) :do
+	 (continuable
+	   (step-demo)
+	   (update-repl-link)))))
+  (defun stop-loop () (setf running nil)))
 
 (defun step-demo ()
-  (evt:pump-events)
+  (step-host)
   (setf *loop-pos* (+ *loop-pos* 0.04))
   (setf (pos *light*) (v! (* 10 (sin *loop-pos*))
                           10

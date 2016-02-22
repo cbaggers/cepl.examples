@@ -17,7 +17,7 @@
 
 (defun make-cubemap-tex (&rest paths)
   (with-c-arrays (ca (mapcar (lambda (p)
-                               (devil-helper:load-image-to-c-array
+                               (cepl.devil:load-image-to-c-array
                                 (merge-pathnames p *examples-dir*)))
                              paths))
     (make-texture ca :element-type :rgb8 :cubes t)))
@@ -38,34 +38,33 @@
   (setf cam (make-camera)))
 
 (defun step-demo ()
-  (gl:clear :color-buffer-bit :depth-buffer-bit)
-  (map-g #'skybox strm :tex tx :mod-clip (m4:m* (cam->clip cam) (world->cam cam)))
-  (update-display))
+  (clear)
+  (map-g #'skybox strm :tex tx :mod-clip (m4:* (cam->clip cam) (world->cam cam)))
+  (swap))
 
 (defvar mouse-ang (v! 0 0))
-(evt:def-named-event-node mouse-listener (e evt:|mouse|)
-  (when (typep e 'evt:mouse-motion)
-    (let ((d (evt:delta e)))
-      (setf mouse-ang (v2:+ (v! (/ (v:x d) -150.0)
-                                (/ (v:y d) -150.0))
-                            mouse-ang)
-            (dir cam) (v! (sin (v:x mouse-ang))
-                          (sin (v:y mouse-ang))
-                          (cos (v:x mouse-ang)))))))
 
-(let ((live::running nil))
+(defun mouse-callback (event timestamp)
+  (declare (ignore timestamp))
+  (let ((d (skitter:xy-pos-relative event)))
+    (setf mouse-ang (v2:+ (v! (/ (v:x d) -150.0)
+			      (/ (v:y d) -150.0))
+			  mouse-ang))
+    (setf (dir cam) (v! (sin (v:x mouse-ang))
+			(sin (v:y mouse-ang))
+			(cos (v:x mouse-ang))))))
+
+(let ((running nil))
   (defun run-loop ()
     (init)
-    (setf live::running t)
+    (setf running t)
     (format t "-starting-")
-    (loop :while live::running
-       :do (continuable
-	     (update-swank)
-	     (cepl.events:pump-events)
-	     (step-demo)))
+    (skitter:whilst-listening-to ((#'mouse-callback (skitter:mouse 0) :pos))
+      (loop :while running
+	 :do (continuable
+	       (update-repl-link)
+	       (step-host)
+	       (step-demo))))
     (print "-shutting down-")
     nil)
-  (defun stop-loop () (setf live::running nil)))
-
-(evt:def-named-event-node sys-listener (e evt:|sys|)
-  (when (typep e 'evt:will-quit) (stop-loop)))
+  (defun stop-loop () (setf running nil)))

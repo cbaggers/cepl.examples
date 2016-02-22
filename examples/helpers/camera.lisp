@@ -54,8 +54,8 @@
 (defmethod (setf frame-size) (frame (camera camera))
   (let ((frame
          (etypecase frame
-            ((simple-array single-float (2)) (list (aref frame 0)
-                                                   (aref frame 1)))
+            (simple-array (list (aref frame 0)
+				(aref frame 1)))
 
             (jungl:viewport (jungl:viewport-resolution frame))
             (list frame))))
@@ -66,15 +66,15 @@
 
 (defclass pos-dir-cam (camera)
   ((world-up :type (simple-array single-float (3))
-             :initform (v3:make-vector3 0.0 1.0 0.0)
+             :initform (v3:make 0.0 1.0 0.0)
              :initarg :world-up
              :accessor world-up)
    (position :type (simple-array single-float (3))
-             :initform (v3:make-vector3 0.0 0.0 0.0)
+             :initform (v3:make 0.0 0.0 0.0)
              :initarg :pos
              :accessor cepl-generics:pos)
    (direction :type (simple-array single-float (3))
-              :initform (v3:make-vector3 0.0 0.0 -1.0)
+              :initform (v3:make 0.0 0.0 -1.0)
               :initarg :dir
               :accessor cepl-generics:dir)))
 
@@ -86,11 +86,11 @@
   (with-slots (world-up position direction) camera
     (let* ((up (v3:normalize
                 (v3:- world-up
-                        (v3:* direction (v3:dot world-up direction)))))
+                        (v3:*s direction (v3:dot world-up direction)))))
            (side (v3:cross direction up))
-           (rotate (m3:make-from-rows side up (v3:negate direction)))
-           (eye-inv (v3:negate (m3:mcol*vec3 rotate position)))
-           (result (m4:rotation-from-matrix3 rotate)))
+           (rotate (m3:from-rows side up (v3:negate direction)))
+           (eye-inv (v3:negate (m3:*v rotate position)))
+           (result (m4:rotation-from-mat3 rotate)))
       (setf (m4:melm result 0 3) (aref eye-inv 0)
             (m4:melm result 1 3) (aref eye-inv 1)
             (m4:melm result 2 3) (aref eye-inv 2))

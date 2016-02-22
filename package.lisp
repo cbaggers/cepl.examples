@@ -7,7 +7,7 @@
   (:export :*examples-dir*))
 
 (defpackage #:cepl.examples.camera
-  (:use #:cl #:cepl)
+  (:use #:cl #:cepl #:varjo-lang)
   (:export :camera
            :make-camera
            :orthographic-projection
@@ -26,13 +26,36 @@
            :world->cam
            :make-cam-clip-matrix))
 
+(defpackage :cepl.examples.model-parsers
+  (:use :cl :cepl)
+  (:export :load-file
+           :meshes->lists
+           :mesh->lists
+           :mesh-list->gpu
+           :mesh->gpu
+           :scene-meshes->gpu
+           :calc-type))
+
+(defpackage :cepl.examples.meshes
+  (:use :cl :cffi :split-sequence :cepl)
+  (:export :mesh
+           :vertices
+           :indicies
+           :primitive-type
+           :transform-mesh
+           :transform-mesh-with-matrix
+           :polygonize
+           :flatten-index))
+
 ;; packages used in the examples
 
 (defpackage #:cepl.examples
   (:use #:cl #:cepl #:cepl.examples.misc
-	#:rtg-math #:varjo-lang))
+	#:rtg-math #:varjo-lang #:livesupport
+	#:skitter.sdl2.keys #:skitter.sdl2.mouse-buttons))
 
 (defpackage #:cepl.examples+camera
   (:use #:cl #:cepl #:cepl.examples.camera
 	#:cepl.examples.misc
-	#:rtg-math #:varjo-lang))
+	#:rtg-math #:varjo-lang #:livesupport
+	#:skitter.sdl2.keys #:skitter.sdl2.mouse-buttons))

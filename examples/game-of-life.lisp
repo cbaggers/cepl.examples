@@ -52,21 +52,18 @@
 (defun step-main ()
   (clear)
   (game-o-life)
-  (jungl:update-display))
+  (swap))
 
-(let ((live::running nil))
+(let ((running nil))
   (defun run-loop ()
     (init_)
-    (setf live::running t)
+    (setf running t)
     (format t "-starting-")
-    (loop :while live::running
+    (loop :while running
        :do (continuable
-	     (update-swank)
-	     (cepl.events:pump-events)
+	     (update-repl-link)
+	     (step-host)
 	     (step-main)))
     (print "-shutting down-")
     nil)
-  (defun stop-loop () (setf live::running nil)))
-
-(evt:def-named-event-node sys-listener (e evt:|sys|)
-  (when (typep e 'evt:will-quit) (stop-loop)))
+  (defun stop-loop () (setf running nil)))

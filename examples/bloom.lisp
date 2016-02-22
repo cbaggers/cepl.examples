@@ -66,11 +66,11 @@
 
 (defun step-demo ()
   (incf *loop* 0.01)
-  (evt:pump-events)
-  (update-swank)
+  (step-host)
+  (update-repl-link)
   (clear)
   (map-g #'bloom *quad-stream* :tx cols :scale-effect (abs (sin *loop*)))
-  (update-display))
+  (swap))
 
 ;;-------------------------------------------------------
 (defparameter *running* nil)
@@ -78,12 +78,9 @@
 (defun run-loop ()
   (setf *running* t)
   (unless cols
-    (setf cols (devil-helper:load-image-to-texture
+    (setf cols (cepl.devil:load-image-to-texture
                 (merge-pathnames "ThickCloudsWater/front.png" *examples-dir*))))
   (loop :while *running* :do (continuable (step-demo))))
 
 (defun stop-loop ()
   (setf *running* nil))
-
-(evt:def-named-event-node sys-listener (e evt:|sys|)
-  (when (typep e 'evt:will-quit) (stop-loop)))

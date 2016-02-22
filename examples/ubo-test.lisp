@@ -19,11 +19,11 @@
     (g-> #'vert #'frag))
 
 (defun step-demo ()
-  (evt:pump-events)
-  (update-swank)
-  (gl:clear :color-buffer-bit :depth-buffer-bit)
+  (step-host)
+  (update-repl-link)
+  (clear)
   (map-g #'prog-1 *stream* :hmm *ubo*)
-  (update-display))
+  (swap))
 
 (defun run-loop ()
   (setf *running* t
@@ -38,6 +38,3 @@
 
 (defun stop-loop ()
   (setf *running* nil))
-
-(evt:def-named-event-node sys-listener (e evt:|sys|)
-  (when (typep e 'evt:will-quit) (stop-loop)))

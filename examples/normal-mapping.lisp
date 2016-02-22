@@ -22,16 +22,18 @@
    (radius :initform 1.0 :initarg :radius :accessor radius)))
 
 (defun load-model (filename &optional hard-rotate)
-  (let* ((result (first (model-parsers:load-file filename)))
-         (mesh (make-instance 'meshes:mesh
+  (let* ((result (first (cepl.examples.model-parsers:load-file filename)))
+         (mesh (make-instance 'cepl.examples.meshes:mesh
                               :primitive-type :triangles
                               :vertices (first result)
                               :index (second result)))
          (mesh~1 (if hard-rotate
-                     (meshes:transform-mesh mesh :rotation hard-rotate)
+                     (cepl.examples.meshes:transform-mesh
+		      mesh :rotation hard-rotate)
                      mesh)))
     (let ((gstream (make-buffer-stream
-                    (meshes:vertices mesh) :index-array (meshes:indicies mesh))))
+                    (cepl.examples.meshes:vertices mesh)
+		    :index-array (cepl.examples.meshes:indicies mesh))))
       (make-instance 'entity :rot (v! 1.57079633 1 0) :gstream gstream
                      :pos (v! 0 -0.3 -3) :mesh mesh~1))))
 
@@ -43,8 +45,8 @@
 	(brick-dif-path  (merge-pathnames "./brick/col.png" *examples-dir*))
 	(brick-norm-path  (merge-pathnames "./brick/norm.png" *examples-dir*)))
     (setf *wibble* (load-model wibble-path (v! pi 0 0)))
-    (setf *tex* (devil-helper:load-image-to-texture brick-dif-path))
-    (setf *normal-map* (devil-helper:load-image-to-texture brick-norm-path))))
+    (setf *tex* (cepl.devil:load-image-to-texture brick-dif-path))
+    (setf *normal-map* (cepl.devil:load-image-to-texture brick-norm-path))))
 
 ;;--------------------------------------------------------------
 ;; drawing
@@ -77,46 +79,48 @@
 
 
 (defun entity-matrix (entity)
-  (reduce #'m4:m* (list (m4:translation (pos entity))
-                        (m4:rotation-from-euler (rot entity))
-                        (m4:scale (scale entity)))))
+  (reduce #'m4:* (list (m4:translation (pos entity))
+		       (m4:rotation-from-euler (rot entity))
+		       (m4:scale (scale entity)))))
 
 (defun draw ()
-  (gl:clear :color-buffer-bit :depth-buffer-bit)
+  (clear)
   (let* ((world-to-cam-matrix (world->cam *camera*))
-         (model-to-cam-matrix (m4:m* world-to-cam-matrix
-                                     (entity-matrix *wibble*)))
+         (model-to-cam-matrix (m4:* world-to-cam-matrix
+				    (entity-matrix *wibble*)))
          ;;(normal-to-cam-matrix (m4:to-matrix3 model-to-cam-matrix))
-         (cam-light-vec (m4:mcol*vec4 (entity-matrix *wibble*)
-                                      (v! (pos *light*) 1.0))))
+         (cam-light-vec (m4:*v (entity-matrix *wibble*)
+			       (v! (pos *light*) 1.0))))
     (map-g #'frag-point-light (gstream *wibble*)
-          :model-space-light-pos (v:s~ cam-light-vec :xyz)
-          :light-intensity (v! 1 1 1 0)
-          :model-to-cam model-to-cam-matrix
-          :norm-map *normal-map*
-          :ambient-intensity (v! 0.2 0.2 0.2 1.0)
-          :textur *tex*))
-  (update-display))
+	   :model-space-light-pos (v:s~ cam-light-vec :xyz)
+	   :light-intensity (v! 1 1 1 0)
+	   :model-to-cam model-to-cam-matrix
+	   :norm-map *normal-map*
+	   :ambient-intensity (v! 0.2 0.2 0.2 1.0)
+	   :textur *tex*))
+  (swap))
 
 ;;--------------------------------------------------------------
 ;; controls
 
-(evt:def-named-event-node mouse-listener (e evt:|mouse|)
-  (when (and (typep e 'evt:mouse-motion)
-             (eq (evt:mouse-state :left) :down))
-    (let ((d (evt:delta e)))
+(defun mouse-callback (event timestamp)
+  (declare (ignore timestamp))
+  (when (skitter:mouse-down-p mouse.left)
+    (let ((d (skitter:xy-pos-relative event)))
       (cond
-        ((eq (evt:key-state :lshift) :down)
-         (v3:incf (pos *wibble*)
-                  (v! 0 0 (/ (v:y d) 100.0))))
-        ((eq (evt:key-state :lctrl) :down)
-         (v3:incf (pos *wibble*)
-                  (v! 0 (/ (v:y d) -100.0) 0)))
-        (t
-         (v3:incf (rot *wibble*)
-                  (v! (/ (v:y d) -100.0)
-                      (/ (v:x d) -100.0)
-                      0.0)))))))
+	;; move in z axis
+	((skitter:key-down-p key.lshift)
+	 (setf (pos *wibble*)
+	       (v3:+ (pos *wibble*) (v! 0 0 (/ (v:y d) 100.0)))))
+	;; move in y axis
+	((skitter:key-down-p key.lctrl)
+	 (setf (pos *wibble*)
+	       (v3:+ (pos *wibble*) (v! 0 (/ (v:y d) -100.0) 0))))
+	;; rotate
+	(t (setf (rot *wibble*)
+		 (v3:+ (rot *wibble*) (v! (/ (v:y d) -100.0)
+					  (/ (v:x d) -100.0)
+					  0.0))))))))
 
 ;;--------------------------------------------------------------
 ;; window
@@ -125,8 +129,9 @@
   (setf (frame-size *camera*) new-dimensions)
   (map-g #'frag-point-light nil :cam-to-clip (cam->clip *camera*)))
 
-(def-named-event-node window-listener (e evt:|window|)
-  (when (eq (evt:action e) :resized) (reshape (evt:data e))))
+(defun window-size-callback (event timestamp)
+  (declare (ignore timestamp))
+  (reshape (skitter:size-2d-vec event)))
 
 ;;--------------------------------------------------------------
 ;; main loop
@@ -135,16 +140,17 @@
   (defun run-loop ()
     (init)
     (setf running t)
-    (loop :while running :do
-       (continuable
-         (step-demo)
-         (update-swank))))
-  (defun stop-loop () (setf running nil))
-  (evt:def-named-event-node sys-listener (e evt:|sys|)
-    (when (typep e 'evt:will-quit) (stop-loop))))
+    (skitter:whilst-listening-to
+	((#'window-size-callback (skitter:window 0) :size)
+	 (#'mouse-callback (skitter:mouse 0) :pos))
+      (loop :while (and running (not (shutting-down-p))) :do
+	 (continuable
+	   (step-demo)
+	   (update-repl-link)))))
+  (defun stop-loop () (setf running nil)))
 
 (defun step-demo ()
-  (evt:pump-events)
+  (step-host)
   (setf *loop-pos* (+ *loop-pos* 0.02))
   (setf (pos *light*) (v! (* 10 (sin *loop-pos*))
                           10

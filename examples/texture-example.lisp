@@ -25,13 +25,13 @@
 (defpipeline ripple-with-wobble () (g-> #'tex-vert #'tex-frag))
 
 (defun step-demo ()
-  (evt:pump-events)
-  (update-swank)
-  (gl:clear :color-buffer-bit :depth-buffer-bit)
+  (step-host)
+  (update-repl-link)
+  (clear)
   (map-g #'ripple-with-wobble *v-stream*
-        :texture *texture* :count *count* :pos-offset (v! 0 0 0 0))
+	 :texture *texture* :count *count* :pos-offset (v! 0 0 0 0))
   (incf *count* 0.08)
-  (update-display))
+  (swap))
 
 (let ((running nil))
   (defun run-loop ()
@@ -49,8 +49,6 @@
                           (temp (make-c-array img-data :dimensions '(64 64)
                                               :element-type :ubyte))
                         (make-texture temp)))
-      (loop :while running :do (continuable (step-demo)))))
+      (loop :while (and running (not (shutting-down-p))) :do
+	 (continuable (step-demo)))))
   (defun stop-loop () (setf running nil)))
-
-(evt:def-named-event-node sys-listener (e evt:|sys|)
-  (when (typep e 'evt:will-quit) (stop-loop)))
