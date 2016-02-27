@@ -4,6 +4,8 @@
 
 (defvar cols nil)
 (defvar *loop* 0)
+(defvar *quad* nil)
+(defvar *quad-stream* nil)
 
 (defun-g vert ((quad g-pt))
   (values (v! (pos quad) 1) (tex quad)))
@@ -79,7 +81,17 @@
   (setf *running* t)
   (unless cols
     (setf cols (cepl.devil:load-image-to-texture
-                (merge-pathnames "ThickCloudsWater/front.png" *examples-dir*))))
+                (merge-pathnames "ThickCloudsWater/front.png" *examples-dir*)))
+    (setf *quad* (make-gpu-array
+                  (list (list (v! -1.0   1.0 0 0) (v!  0.0   1.0))
+                        (list (v! -1.0  -1.0 0 0) (v!  0.0   0.0))
+                        (list (v!  1.0  -1.0 0 0) (v!  1.0   0.0))
+                        (list (v! -1.0   1.0 0 0) (v!  0.0   1.0))
+                        (list (v!  1.0  -1.0 0 0) (v!  1.0   0.0))
+                        (list (v!  1.0   1.0 0 0) (v!  1.0   1.0)))
+                  :element-type 'g-pt
+                  :dimensions 6))
+    (setf *quad-stream* (make-buffer-stream *quad* :retain-arrays t)))
   (loop :while *running* :do (continuable (step-demo))))
 
 (defun stop-loop ()

@@ -2,6 +2,8 @@
 
 (defvar field-a nil)
 (defvar field-b nil)
+(defvar *quad* nil)
+(defvar *quad-stream* nil)
 
 (defun-g pass-through-vert ((vert g-pt))
   (values (v! (pos vert) 1) (tex vert)))
@@ -47,7 +49,17 @@
                                                     (v!ubyte 0 0 0 0))))
             :dimensions '(1024 1024) :element-type :ubyte-vec4)))
     (setf field-a (make-fbo `(:c ,(make-texture a)))
-          field-b (make-fbo `(:c ,(make-texture a))))))
+          field-b (make-fbo `(:c ,(make-texture a)))
+	  *quad* (make-gpu-array
+		  (list (list (v! -1.0   1.0 0 0) (v!  0.0   1.0))
+			(list (v! -1.0  -1.0 0 0) (v!  0.0   0.0))
+			(list (v!  1.0  -1.0 0 0) (v!  1.0   0.0))
+			(list (v! -1.0   1.0 0 0) (v!  0.0   1.0))
+			(list (v!  1.0  -1.0 0 0) (v!  1.0   0.0))
+			(list (v!  1.0   1.0 0 0) (v!  1.0   1.0)))
+		  :element-type 'g-pt
+		  :dimensions 6)
+	  *quad-stream* (make-buffer-stream *quad* :retain-arrays t))))
 
 (defun step-main ()
   (clear)

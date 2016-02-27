@@ -11,12 +11,12 @@
   (let ((p (1+ position-arg-num))
         (oc object-call))
     `(normalize
-      (v! (- ,(utils:replace-nth oc p `(+ ,(nth p oc) (v! 0.01  0.0  0.0)))
-             ,(utils:replace-nth oc p `(- ,(nth p oc) (v! 0.01  0.0  0.0))))
-          (- ,(utils:replace-nth oc p `(+ ,(nth p oc) (v!  0.0 0.01  0.0)))
-             ,(utils:replace-nth oc p `(- ,(nth p oc) (v!  0.0 0.01  0.0))))
-          (- ,(utils:replace-nth oc p `(+ ,(nth p oc) (v!  0.0  0.0 0.01)))
-             ,(utils:replace-nth oc p `(- ,(nth p oc) (v!  0.0  0.0 0.01))))))))
+      (v! (- ,(cepl-utils:replace-nth oc p `(+ ,(nth p oc) (v! 0.01  0.0  0.0)))
+             ,(cepl-utils:replace-nth oc p `(- ,(nth p oc) (v! 0.01  0.0  0.0))))
+          (- ,(cepl-utils:replace-nth oc p `(+ ,(nth p oc) (v!  0.0 0.01  0.0)))
+             ,(cepl-utils:replace-nth oc p `(- ,(nth p oc) (v!  0.0 0.01  0.0))))
+          (- ,(cepl-utils:replace-nth oc p `(+ ,(nth p oc) (v!  0.0  0.0 0.01)))
+             ,(cepl-utils:replace-nth oc p `(- ,(nth p oc) (v!  0.0  0.0 0.01))))))))
 
 (defun-g sphere ((p :vec3) (r :float))
   (- (length p) r))
