@@ -4,6 +4,7 @@
   :description "Examples for the CEPL project"
   :author "Chris Bagley <techsnuffle@gmail.com>"
   :license "GPL V3"
+  #+asdf-unicode :encoding #+asdf-unicode :utf-8
   :serial t
   :depends-on (#:cepl.sdl2 #:cepl.camera #:dendrite #:skitter
 			   #:cepl.skitter.sdl2 #:livesupport
