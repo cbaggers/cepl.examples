@@ -8,7 +8,8 @@
   :serial t
   :depends-on (#:cepl.sdl2 #:cepl.camera #:dendrite #:skitter
 			   #:cepl.skitter.sdl2 #:livesupport
-			   #:cepl.devil #:classimp #:split-sequence)
+			   #:cepl.devil #:classimp #:split-sequence
+               #:temporal-functions)
   :components ((:file "package")
 	       (:file "examples/helpers/examples-data")
 	       (:file "examples/helpers/camera")

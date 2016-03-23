@@ -31,7 +31,6 @@
   (update-repl-link)
   (setf *loop* (+ 0.004 *loop*))
   (clear)
-  (ttm:update)
   (loop :for i :below 100 :do
      (let ((i (/ i 2.0)))
        (map-g #'prog-1 *vertex-stream* :i i)))
