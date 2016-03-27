@@ -25,7 +25,7 @@
   ((cam->clip :type (simple-array single-float (16)) :reader cam->clip)
    (cam->clip-func :initform nil :initarg :cam->clip-func )
    (frame-size :reader frame-size :initarg :frame-size
-               :initform (cepl:viewport-resolution (cepl:current-viewport)))
+               :initform (cepl:viewport-dimensions (cepl:current-viewport)))
    (near :type single-float :reader near :initarg :near)
    (far :type single-float :reader far :initarg :far)
    (fov :type single-float :reader fov :initarg :fov)))
@@ -56,8 +56,7 @@
          (etypecase frame
             (simple-array (list (aref frame 0)
 				(aref frame 1)))
-
-            (cepl:viewport (cepl:viewport-resolution frame))
+            (cepl:viewport (cepl:viewport-dimensions frame))
             (list frame))))
     (setf (slot-value camera 'frame-size) frame))
   (update-cam->clip camera))
@@ -103,8 +102,7 @@
           (etypecase frame
             ((simple-array single-float (2)) (list (aref frame 0)
                                                    (aref frame 1)))
-
-            (cepl:viewport (cepl:viewport-resolution frame))
+            (cepl:viewport (cepl:viewport-dimensions frame))
             (list frame)))
          (camera (make-instance 'pos-dir-cam
                                 :cam->clip-func cam->clip-function
