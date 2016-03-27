@@ -18,7 +18,7 @@
       (:indices ,(loop :for % :across f :append (coerce % 'list))))))
 
 (defun calc-type (v n tc)
-  (apply #'cepl-utils:symb-package :jungl
+  (apply #'cepl-utils:symb-package :cepl
          (remove nil (cons :g- (list (and v :p)
                                      (and (> (length n) 0) :n)
                                      (and (> (length tc) 0) :t))))))
