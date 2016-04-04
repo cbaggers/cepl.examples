@@ -52,10 +52,12 @@
 (defpackage #:cepl.examples
   (:use #:cl #:cepl #:cepl.examples.misc
 	#:rtg-math #:varjo-lang #:livesupport
-	#:skitter.sdl2.keys #:skitter.sdl2.mouse-buttons))
+	#:skitter.sdl2.keys #:skitter.sdl2.mouse-buttons
+	#:temporal-functions))
 
 (defpackage #:cepl.examples+camera
   (:use #:cl #:cepl #:cepl.examples.camera
 	#:cepl.examples.misc
 	#:rtg-math #:varjo-lang #:livesupport
-	#:skitter.sdl2.keys #:skitter.sdl2.mouse-buttons))
+	#:skitter.sdl2.keys #:skitter.sdl2.mouse-buttons
+	#:temporal-functions))

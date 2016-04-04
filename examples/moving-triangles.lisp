@@ -23,8 +23,8 @@
 (defun-g frag ()
   (v! (cos *loop*) (sin *loop*) 0.4 1.0))
 
-(defpipeline prog-1 ()
-    (g-> #'vert #'frag))
+(def-g-> prog-1 ()
+  #'vert #'frag)
 
 (defun step-demo ()
   (step-host)

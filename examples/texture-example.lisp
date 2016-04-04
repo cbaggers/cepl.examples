@@ -3,6 +3,7 @@
 
 (defparameter *count* 0.0)
 (defparameter *texture* nil)
+(defparameter *sampler* nil)
 (defparameter *v-stream* nil)
 
 (defun-g tex-vert ((vert g-pt))
@@ -22,14 +23,15 @@
     (+ (texture texture (+ rip-offset tex-coord))
        (v! (* -0.2 height) (* -0.2 height) 0.0 0.0))))
 
-(defpipeline ripple-with-wobble () (g-> #'tex-vert #'tex-frag))
+(def-g-> ripple-with-wobble ()
+  #'tex-vert #'tex-frag)
 
 (defun step-demo ()
   (step-host)
   (update-repl-link)
   (clear)
   (map-g #'ripple-with-wobble *v-stream*
-	 :texture *texture* :count *count* :pos-offset (v! 0 0 0 0))
+	 :texture *sampler* :count *count* :pos-offset (v! 0 0 0 0))
   (incf *count* 0.08)
   (swap))
 
@@ -47,8 +49,9 @@
              :retain-arrays t))
       (setf *texture* (with-c-array
                           (temp (make-c-array img-data :dimensions '(64 64)
-                                              :element-type :ubyte))
+                                              :element-type :uint8))
                         (make-texture temp)))
+      (setf *sampler* (sample *texture*))
       (loop :while (and running (not (shutting-down-p))) :do
 	 (continuable (step-demo)))))
   (defun stop-loop () (setf running nil)))

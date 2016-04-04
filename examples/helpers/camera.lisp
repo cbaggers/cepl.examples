@@ -12,7 +12,7 @@
 ;; it exists to show that cepl doesnt require you to use
 ;; the cepl.camera library to make a camera.
 ;;
-;; This camera also doesnt use the 'space type from cepl
+;; This camera also doesnt use the 'vec-space type from cepl
 ;; so this shows what code looks like without that
 ;; feature
 ;; ======================================================
@@ -29,6 +29,15 @@
    (near :type single-float :reader near :initarg :near)
    (far :type single-float :reader far :initarg :far)
    (fov :type single-float :reader fov :initarg :fov)))
+
+
+(defgeneric update-cam->clip (camera))
+(defgeneric look-at (camera point-vec3))
+
+(defgeneric (setf near) (distance camera))
+(defgeneric (setf far) (distance camera))
+(defgeneric (setf fov) (angle camera))
+(defgeneric (setf frame-size) (frame camera))
 
 (defmethod update-cam->clip ((camera camera))
   (setf (slot-value camera 'cam->clip)
@@ -71,11 +80,11 @@
    (position :type (simple-array single-float (3))
              :initform (v3:make 0.0 0.0 0.0)
              :initarg :pos
-             :accessor cepl:pos)
+             :accessor pos)
    (direction :type (simple-array single-float (3))
               :initform (v3:make 0.0 0.0 -1.0)
               :initarg :dir
-              :accessor cepl:dir)))
+              :accessor dir)))
 
 (defmethod look-at ((camera pos-dir-cam) point-vec3)
   (with-slots (world-up position direction) camera

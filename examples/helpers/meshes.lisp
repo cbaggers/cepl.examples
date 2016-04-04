@@ -10,6 +10,10 @@
    (indicies :initarg :index :reader indicies)
    (primitive-type :initarg :primitive-type :reader primitive-type)))
 
+(defgeneric vert-layout (mesh))
+(defgeneric polygonize (region primitive-type
+			&key index-data normals texture-coords))
+
 (defmethod vert-layout ((mesh mesh)) (element-type (vertices mesh)))
 
 (defun transform-mesh (mesh &key (translation (v! 0 0 0))

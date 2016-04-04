@@ -4,7 +4,7 @@
 (defparameter *stream* nil)
 (defparameter *running* nil)
 
-(defstruct-g pos-col ()
+(defstruct-g pos-col
   (position :vec3 :accessor pos)
   (color :vec4 :accessor col))
 

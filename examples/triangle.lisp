@@ -4,7 +4,7 @@
 (defparameter *stream* nil)
 (defparameter *running* nil)
 
-(defstruct-g pos-col ()
+(defstruct-g pos-col
   (position :vec3 :accessor pos)
   (color :vec4 :accessor col))
 
@@ -15,8 +15,8 @@
 (defun-g frag ((color :vec4))
   color)
 
-(defpipeline prog-1 ()
-    (g-> #'vert #'frag))
+(def-g-> prog-1 ()
+  #'vert #'frag)
 
 (defun step-demo ()
   (step-host)

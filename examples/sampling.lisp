@@ -4,6 +4,7 @@
 (defparameter *stream* nil)
 (defparameter *running* nil)
 (defparameter *sam* nil)
+(defparameter *sam2* nil)
 
 (defun-g vert ((vert g-pt))
   (values (v! (pos vert) 1.0) (tex vert)))
@@ -11,14 +12,18 @@
 (defun-g frag ((tc :vec2) &uniform (tex :sampler-2d))
   (texture tex tc))
 
-(defpipeline prog-1 () (g-> #'vert #'frag))
+(def-g-> prog-1 ()
+  #'vert #'frag)
+
+(defun-t flip ()
+  (repeat (before (seconds 1) t)
+	  (before (seconds 1) nil)))
 
 (defun step-demo ()
   (step-host)
   (update-repl-link)
   (clear)
-  (with-sampling ((*tex* *sam*))
-    (map-g #'prog-1 *stream* :tex *tex*))
+  (map-g #'prog-1 *stream* :tex (if (flip) *sam* *sam2*))
   (swap))
 
 (defun run-loop ()
@@ -31,7 +36,8 @@
                   :retain-arrays t)
         *tex* (cepl.devil:load-image-to-texture
                (merge-pathnames "brick/col.png" *examples-dir*))
-        *sam* (make-sampler))
+	*sam* (sample *tex*)
+	*sam2* (sample *tex* :wrap :clamp-to-edge))
   (loop :while *running* :do (continuable (step-demo))))
 
 (defun stop-loop ()

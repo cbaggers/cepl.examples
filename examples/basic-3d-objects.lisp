@@ -4,10 +4,6 @@
 (defvar *entities* nil)
 (defvar *camera* nil)
 
-(defstruct-g vert-data ()
-  (position :vec3)
-  (color :vec4))
-
 (defun-g b3d-vert ((vert g-pc) &uniform (model->world :mat4) (world->cam :mat4)
 		   (cam->clip :mat4))
   (values (* cam->clip
@@ -19,8 +15,8 @@
 (defun-g b3d-frag ((interp-color :vec4))
   interp-color)
 
-(defpipeline render-widgets ()
-    (g-> #'b3d-vert #'b3d-frag))
+(def-g-> render-widgets ()
+  #'b3d-vert #'b3d-frag)
 
 (defclass entity ()
   ((e-stream :initform nil :initarg :e-stream :accessor e-stream)
