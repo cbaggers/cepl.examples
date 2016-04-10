@@ -14,7 +14,12 @@
 (defparameter *bird-tex* nil)
 (defparameter *bird-tex2* nil)
 (defparameter *wib-tex* nil)
+(defparameter *bird-sampler* nil)
+(defparameter *bird-sampler2* nil)
+(defparameter *wib-sampler* nil)
 (defparameter *loop-pos* 0.0)
+(defparameter *scene* nil)
+(defparameter *scene-sampler* nil)
 
 (defclass entity ()
   ((gstream :initform nil :initarg :gstream :accessor gstream)
@@ -46,6 +51,8 @@
                      :pos (v! 0 -0.4 -1) :mesh mesh~1))))
 
 (defun init ()
+  (setf *scene* (make-fbo :c :d))
+  (setf *scene-sampler* (sample (attachment-tex *scene* 0)))
   (setf *light* (make-instance 'light))
   (setf *camera* (make-camera))
   (setf *wibble* (load-model (merge-pathnames "wibble.3ds" *examples-dir*)
@@ -57,7 +64,10 @@
   (setf *bird-tex2* (cepl.devil:load-image-to-texture
                      (merge-pathnames "bird/char_bird_col.png" *examples-dir*)))
   (setf *wib-tex* (cepl.devil:load-image-to-texture
-                   (merge-pathnames "brick/col.png" *examples-dir*))))
+                   (merge-pathnames "brick/col.png" *examples-dir*)))
+  (setf *bird-sampler* (sample *bird-tex*))
+  (setf *bird-sampler2* (sample *bird-tex2*))
+  (setf *wib-sampler* (sample *wib-tex*)))
 
 ;;--------------------------------------------------------------
 ;; drawing
@@ -103,23 +113,29 @@
          (r (* (texture bird-tex (* (v! 1 -1) tex-coord)) 0.1)))
     (+ r c)))
 
-(defpipeline standard-pass () (g-> #'standard-vert #'standard-frag)
+(def-g-> standard-pass ()
+  #'standard-vert #'standard-frag
   :post #'reshape)
 
-(defpipeline refract-pass () (g-> #'refract-vert #'refract-frag)
+(def-g-> refract-pass ()
+  #'refract-vert #'refract-frag
   :post #'reshape)
 
-(defpipeline two-pass (&uniform model-to-cam2)
-    (g-> (scene (clear scene)
-                (standard-pass :light-intensity (v! 1 1 1 0)
-                               :textur *wib-tex*
-                               :ambient-intensity (v! 0.2 0.2 0.2 1.0)))
-         (nil (refract-pass :model-to-cam model-to-cam2
-                            :fbo-tex (attachment scene 0)
-                            :textur *bird-tex*
-                            :bird-tex *bird-tex2*
-                            :loop *loop-pos*)))
-  :fbos (scene :c :d))
+(defun two-pass (scene wib-stream bird-stream model-to-cam model-to-cam2
+		 model-space-light-pos)
+  (clear scene)
+  (map-g-into scene #'standard-pass wib-stream
+	      :textur *wib-sampler*
+	      :ambient-intensity (v! 0.2 0.2 0.2 1.0)
+	      :light-intensity (v! 1 1 1 0)
+	      :model-space-light-pos model-space-light-pos
+	      :model-to-cam model-to-cam)
+  (map-g #'refract-pass bird-stream
+	 :loop *loop-pos*
+	 :fbo-tex *scene-sampler*
+	 :bird-tex *bird-sampler2*
+	 :textur *bird-sampler*
+	 :model-to-cam model-to-cam2))
 
 (defun draw ()
   (clear)
@@ -127,15 +143,15 @@
          (cam-light-vec (m4:*v (entity-matrix *wibble*)
 			       (v! (pos *light*) 1.0))))
     (map-g #'standard-pass (gstream *wibble*)
-	   :textur *wib-tex*
+	   :textur *wib-sampler*
 	   :ambient-intensity (v! 0.2 0.2 0.2 1.0)
 	   :light-intensity (v! 1 1 1 0)
 	   :model-space-light-pos (v:s~ cam-light-vec :xyz)
 	   :model-to-cam (m4:* world-to-cam-matrix (entity-matrix *wibble*)))
-    (map-g #'two-pass (gstream *wibble*) (gstream *bird*)
-	   :model-to-cam (m4:* world-to-cam-matrix (entity-matrix *wibble*))
-	   :model-to-cam2 (m4:* world-to-cam-matrix (entity-matrix *bird*))
-	   :model-space-light-pos (v:s~ cam-light-vec :xyz)))
+    (two-pass *scene* (gstream *wibble*) (gstream *bird*)
+	   (m4:* world-to-cam-matrix (entity-matrix *wibble*))
+	   (m4:* world-to-cam-matrix (entity-matrix *bird*))
+	   (v:s~ cam-light-vec :xyz)))
   (swap))
 
 
