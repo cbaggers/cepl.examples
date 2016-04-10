@@ -1,5 +1,7 @@
 (in-package :cepl.examples)
 
+(defstruct field fbo sampler)
+
 (defvar field-a nil)
 (defvar field-b nil)
 (defvar *quad* nil)
@@ -28,28 +30,33 @@
       ((and (= score 3) (= (v:x current) 0)) (v! 1 0 0 0))
       (t current))))
 
-(defpipeline copy-pass () (g-> #'pass-through-vert #'pass-through-frag))
-(defpipeline gol-pass () (g-> #'pass-through-vert #'the-meat!))
+(def-g-> copy-pass () #'pass-through-vert #'pass-through-frag)
+(def-g-> gol-pass () #'pass-through-vert #'the-meat!)
 
-(defpipeline gol-render (fbo-current fbo-new)
-    (g-> (fbo-new (gol-pass *quad-stream* :board (attachment fbo-current 0)))
-         (nil (copy-pass *quad-stream* :board (attachment fbo-new 0)))))
+(defun gol-render (source destination)
+  (map-g-into (field-fbo destination) #'gol-pass *quad-stream*
+	      :board (field-sampler source))
+  (map-g #'copy-pass *quad-stream* :board (field-sampler destination)))
 
 (let ((flip-flop t))
   (defun game-o-life ()
     (if (setf flip-flop (not flip-flop))
-        (map-g #'gol-render field-b field-a)
-        (map-g #'gol-render field-a field-b))))
+        (gol-render field-b field-a)
+        (gol-render field-a field-b))))
 
 (defun init_ ()
-  (let ((a (make-c-array
-            (loop for i below 1024 collect
-                 (loop for i below 1024 collect (if (= 1 (random 5))
-                                                    (v!ubyte 255 0 0 0)
-                                                    (v!ubyte 0 0 0 0))))
-            :dimensions '(1024 1024) :element-type :ubyte-vec4)))
-    (setf field-a (make-fbo `(:c ,(make-texture a)))
-          field-b (make-fbo `(:c ,(make-texture a)))
+  (let* ((a (make-c-array
+	     (loop for i below 1024 collect
+		  (loop for i below 1024 collect (if (= 1 (random 5))
+						     (v!uint8 255 0 0 0)
+						     (v!uint8 0 0 0 0))))
+	     :dimensions '(1024 1024) :element-type :uint8-vec4))
+	 (tex-a (make-texture a))
+	 (tex-b (make-texture a)))
+    (setf field-a (make-field :fbo (make-fbo `(:c ,tex-a))
+			      :sampler (sample tex-a))
+          field-b (make-field :fbo (make-fbo `(:c ,tex-b))
+			      :sampler (sample tex-b))
 	  *quad* (make-gpu-array
 		  (list (list (v! -1.0   1.0 0 0) (v!  0.0   1.0))
 			(list (v! -1.0  -1.0 0 0) (v!  0.0   0.0))
