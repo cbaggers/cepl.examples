@@ -35,8 +35,8 @@
 
 ;;----------------------------------------------------------------------
 
-(defpipeline prog-1 ()
-    (g-> #'vert #'frag-glsl))
+(def-g-> prog-1 ()
+  #'vert #'frag-glsl)
 
 (defun step-demo ()
   (step-host)

@@ -11,8 +11,10 @@
 (defparameter *camera* nil)
 (defparameter *light* nil)
 (defparameter *tex* nil)
-(defparameter *loop-pos* 0.0)
+(defparameter *tex-sampler* nil)
 (defparameter *pos-tex* nil)
+(defparameter *pos-sampler* nil)
+(defparameter *loop-pos* 0.0)
 
 (defclass entity ()
   ((gstream :initform nil :initarg :gstream :accessor gstream)
@@ -48,6 +50,8 @@
   (setf *pos-tex* (make-texture nil :dimensions 1000
                                 :element-type :rgba32f
                                 :buffer-storage t))
+  (setf *tex-sampler* (sample *tex*))
+  (setf *pos-sampler* (sample *pos-tex*))
   (push-g (loop :for i :below 1000 :collect
 	     (v! (- (random 20.0) 10) (- (random 20.0) 10)
 		 (- -20 (random 10.0)) 1))
@@ -83,7 +87,8 @@
     (+ (* t-col light-intensity cos-ang-incidence)
        (* t-col ambient-intensity))))
 
-(defpipeline instanced-birds () (g-> #'instance-vert #'instance-frag)
+(def-g-> instanced-birds ()
+  #'instance-vert #'instance-frag
   :post #'reshape)
 
 (defun entity-matrix (entity)
@@ -106,8 +111,8 @@
              :model-to-cam model-to-cam-matrix
              ;; :normal-model-to-cam normal-to-cam-matrix
              :ambient-intensity (v! 0.2 0.2 0.2 1.0)
-             :textur *tex*
-             :offsets *pos-tex*)))
+             :textur *tex-sampler*
+             :offsets *pos-sampler*)))
   (swap))
 
 ;;--------------------------------------------------------------
