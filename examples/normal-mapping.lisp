@@ -7,7 +7,9 @@
 (defparameter *camera* nil)
 (defparameter *light* nil)
 (defparameter *tex* nil)
+(defparameter *sampler* nil)
 (defparameter *normal-map* nil)
+(defparameter *normal-sampler* nil)
 (defparameter *loop-pos* 0.0)
 
 (defclass entity ()
@@ -46,7 +48,9 @@
 	(brick-norm-path  (merge-pathnames "./brick/norm.png" *examples-dir*)))
     (setf *wibble* (load-model wibble-path (v! pi 0 0)))
     (setf *tex* (cepl.devil:load-image-to-texture brick-dif-path))
-    (setf *normal-map* (cepl.devil:load-image-to-texture brick-norm-path))))
+    (setf *sampler* (sample *tex*))
+    (setf *normal-map* (cepl.devil:load-image-to-texture brick-norm-path))
+    (setf *normal-sampler* (sample *normal-map*))))
 
 ;;--------------------------------------------------------------
 ;; drawing
@@ -74,9 +78,9 @@
     (+ (* t-col light-intensity cos-ang-incidence)
        (* t-col ambient-intensity))))
 
-(defpipeline frag-point-light () (g-> #'nm-vert #'nm-frag)
+(def-g-> frag-point-light ()
+  #'nm-vert #'nm-frag
   :post #'reshape)
-
 
 (defun entity-matrix (entity)
   (reduce #'m4:* (list (m4:translation (pos entity))
@@ -95,9 +99,9 @@
 	   :model-space-light-pos (v:s~ cam-light-vec :xyz)
 	   :light-intensity (v! 1 1 1 0)
 	   :model-to-cam model-to-cam-matrix
-	   :norm-map *normal-map*
+	   :norm-map *normal-sampler*
 	   :ambient-intensity (v! 0.2 0.2 0.2 1.0)
-	   :textur *tex*))
+	   :textur *sampler*))
   (swap))
 
 ;;--------------------------------------------------------------
@@ -118,7 +122,7 @@
 	       (v3:+ (pos *wibble*) (v! 0 (/ (v:y d) -100.0) 0))))
 	;; rotate
 	(t (setf (rot *wibble*)
-		 (v3:+ (rot *wibble*) (v! (/ (v:y d) -100.0)
+		 (v:+ (rot *wibble*) (v! (/ (v:y d) -100.0)
 					  (/ (v:x d) -100.0)
 					  0.0))))))))
 
