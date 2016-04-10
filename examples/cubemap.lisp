@@ -3,6 +3,7 @@
 ;; NOTE: Ensure you have loaded cepl-image-helper (or cepl-default)
 
 (defvar tx)
+(defvar sampler nil)
 (defvar strm nil)
 (defvar cam)
 
@@ -13,7 +14,7 @@
 (defun-g frag ((tc :vec3) &uniform (tex :sampler-cube))
   (texture tex tc))
 
-(defpipeline skybox () (g-> #'vert #'frag))
+(def-g-> skybox () #'vert #'frag)
 
 (defun make-cubemap-tex (&rest paths)
   (with-c-arrays (ca (mapcar (lambda (p)
@@ -29,6 +30,7 @@
                              "ThickCloudsWater/down.png"
                              "ThickCloudsWater/front.png"
                              "ThickCloudsWater/back.png"))
+  (setf sampler (sample tx))
   (let* ((bx (dendrite.primitives:box-data))
          (data (make-gpu-array (first bx) :element-type 'g-pnt))
          (ind (make-gpu-array (dendrite.primitives:swap-winding-order (second bx))
@@ -39,7 +41,8 @@
 
 (defun step-demo ()
   (clear)
-  (map-g #'skybox strm :tex tx :mod-clip (m4:* (cam->clip cam) (world->cam cam)))
+  (map-g #'skybox strm
+	 :tex sampler :mod-clip (m4:* (cam->clip cam) (world->cam cam)))
   (swap))
 
 (defvar mouse-ang (v! 0 0))
