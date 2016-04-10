@@ -74,7 +74,7 @@
            (setf e (+ e (* eye-dir d)))))
     (v! output 1.0)))
 
-(defpipeline raymarcher () (g-> #'ray-vert #'ray-frag))
+(def-g-> raymarcher () #'ray-vert #'ray-frag)
 
 (let ((running nil))
   (defun run-loop ()

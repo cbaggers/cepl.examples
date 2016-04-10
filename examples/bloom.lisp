@@ -2,11 +2,11 @@
 
 ;; NOTE: Ensure you have loaded cepl-image-helper (or cepl-default)
 
-(defvar cols nil)
-(defvar cols-sampler nil)
+(defparameter cols nil)
+(defparameter cols-sampler nil)
 
-(defvar *loop* 0)
-(defvar *quad*
+(defparameter *loop* 0)
+(defparameter *quad*
   (make-gpu-array
    (list (list (v! -1.0   1.0 0 0) (v!  0.0   1.0))
 	 (list (v! -1.0  -1.0 0 0) (v!  0.0   0.0))
@@ -16,7 +16,7 @@
 	 (list (v!  1.0   1.0 0 0) (v!  1.0   1.0)))
    :element-type 'g-pt
    :dimensions 6))
-(defvar *quad-stream*
+(defparameter *quad-stream*
   (make-buffer-stream *quad* :retain-arrays t))
 
 (defun-g vert ((quad g-pt))

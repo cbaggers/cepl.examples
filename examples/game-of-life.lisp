@@ -2,10 +2,10 @@
 
 (defstruct field fbo sampler)
 
-(defvar field-a nil)
-(defvar field-b nil)
-(defvar *quad* nil)
-(defvar *quad-stream* nil)
+(defparameter field-a nil)
+(defparameter field-b nil)
+(defparameter *quad* nil)
+(defparameter *quad-stream* nil)
 
 (defun-g pass-through-vert ((vert g-pt))
   (values (v! (pos vert) 1) (tex vert)))

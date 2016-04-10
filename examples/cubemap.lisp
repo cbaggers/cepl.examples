@@ -2,10 +2,10 @@
 
 ;; NOTE: Ensure you have loaded cepl-image-helper (or cepl-default)
 
-(defvar tx)
-(defvar sampler nil)
-(defvar strm nil)
-(defvar cam)
+(defparameter tx)
+(defparameter sampler nil)
+(defparameter strm nil)
+(defparameter cam)
 
 (defun-g vert ((vert :vec3) &uniform (mod-clip :mat4))
   (values (* mod-clip (v! vert 1))
@@ -45,7 +45,7 @@
 	 :tex sampler :mod-clip (m4:* (cam->clip cam) (world->cam cam)))
   (swap))
 
-(defvar mouse-ang (v! 0 0))
+(defparameter mouse-ang (v! 0 0))
 
 (defun mouse-callback (event timestamp)
   (declare (ignore timestamp))

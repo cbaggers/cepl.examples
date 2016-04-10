@@ -2,17 +2,17 @@
 
 ;;- - - - - - - - - - - - - - - - - -
 
-(defvar box-data nil)
-(defvar box-index nil)
-(defvar box-stream nil)
-(defvar brick nil)
+(defparameter box-data nil)
+(defparameter box-index nil)
+(defparameter box-stream nil)
+(defparameter brick nil)
 
 (defstruct box
   (pos (v! 0 0 -10))
   (rot (q:identity)))
 
-(defvar box-a (make-box :pos (v! 0 0 -5)))
-(defvar box-b (make-box :pos (v! 0.3 0 -3)))
+(defparameter box-a (make-box :pos (v! 0 0 -5)))
+(defparameter box-b (make-box :pos (v! 0.3 0 -3)))
 
 ;;- - - - - - - - - - - - - - - - - -
 
@@ -27,9 +27,9 @@
 
 ;;- - - - - - - - - - - - - - - - - -
 
-(defvar bp (make-blending-params))
-(defvar camera (make-camera))
-(defvar factor 0)
+(defparameter bp (make-blending-params))
+(defparameter camera (make-camera))
+(defparameter factor 0)
 
 (defun-g box-vert ((vert g-pnt) &uniform (model->clip :mat4))
   (values (* model->clip (v! (pos vert) 1))

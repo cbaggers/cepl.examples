@@ -1,8 +1,8 @@
 ;; More 3D - Multiple objects rotating
 (in-package :cepl.examples+camera)
 
-(defvar *entities* nil)
-(defvar *camera* nil)
+(defparameter *entities* nil)
+(defparameter *camera* nil)
 
 (defun-g b3d-vert ((vert g-pc) &uniform (model->world :mat4) (world->cam :mat4)
 		   (cam->clip :mat4))
