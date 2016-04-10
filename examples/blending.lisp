@@ -39,12 +39,13 @@
 (defun-g box-frag ((norm :vec3) (tc :vec2) &uniform (tex :sampler-2d) (fac :float))
   (v! (s~ (texture tex (* tc 1)) :xyz) fac))
 
-(defpipeline draw-box () (g-> #'box-vert #'box-frag))
+(def-g-> draw-box ()
+  #'box-vert #'box-frag)
 
 ;;- - - - - - - - - - - - - - - - - -
 
 (defun step-demo ()
-  (incf factor 0.02)
+  (incf factor 0.12)
   (setf (box-rot box-a) (q:from-axis-angle
                          (v! (sin factor) (cos factor) 1) 10)
         (box-rot box-b) (q:from-axis-angle
@@ -67,12 +68,13 @@
     (setf box-data (make-gpu-array d :element-type 'g-pnt)
           box-index (make-gpu-array i :element-type :ushort)
           box-stream (make-buffer-stream box-data :index-array box-index)
-          brick (cepl.devil:load-image-to-texture
-                 (merge-pathnames "brick/col.png" *examples-dir*)))))
+          brick (sample
+		 (cepl.devil:load-image-to-texture
+		  (merge-pathnames "brick/col.png" *examples-dir*))))))
 
 (let ((running t))
   (defun run-loop ()
-    (init)
+    (unless brick (init))
     (loop :while (and running (not (shutting-down-p))) :do
        (continuable
          (step-host)
