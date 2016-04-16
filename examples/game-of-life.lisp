@@ -53,9 +53,9 @@
 	     :dimensions '(1024 1024) :element-type :uint8-vec4))
 	 (tex-a (make-texture a))
 	 (tex-b (make-texture a)))
-    (setf field-a (make-field :fbo (make-fbo `(:c ,tex-a))
+    (setf field-a (make-field :fbo (make-fbo `(0 ,tex-a))
 			      :sampler (sample tex-a))
-          field-b (make-field :fbo (make-fbo `(:c ,tex-b))
+          field-b (make-field :fbo (make-fbo `(0 ,tex-b))
 			      :sampler (sample tex-b))
 	  *quad* (make-gpu-array
 		  (list (list (v! -1.0   1.0 0 0) (v!  0.0   1.0))

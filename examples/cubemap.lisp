@@ -1,11 +1,9 @@
 (in-package :cepl.examples+camera)
 
-;; NOTE: Ensure you have loaded cepl-image-helper (or cepl-default)
-
-(defparameter tx)
+(defparameter tx nil)
 (defparameter sampler nil)
 (defparameter strm nil)
-(defparameter cam)
+(defparameter cam nil)
 
 (defun-g vert ((vert :vec3) &uniform (mod-clip :mat4))
   (values (* mod-clip (v! vert 1))

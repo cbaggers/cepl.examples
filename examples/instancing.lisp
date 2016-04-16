@@ -45,7 +45,7 @@
 (defun init ()
   (setf *light* (make-instance 'light))
   (setf *camera* (make-camera))
-  (setf *wibble* (load-model "./bird/bird.3ds" (v! pi 0 0)))
+  (setf *wibble* (load-model "./bird/bird.3ds" ))
   (setf *tex* (cepl.devil:load-image-to-texture "./bird/char_bird_col.png"))
   (setf *pos-tex* (make-texture nil :dimensions 1000
                                 :element-type :rgba32f

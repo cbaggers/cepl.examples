@@ -51,7 +51,7 @@
                      :pos (v! 0 -0.4 -1) :mesh mesh~1))))
 
 (defun init ()
-  (setf *scene* (make-fbo :c :d))
+  (setf *scene* (make-fbo 0 :d))
   (setf *scene-sampler* (sample (attachment-tex *scene* 0)))
   (setf *light* (make-instance 'light))
   (setf *camera* (make-camera))
