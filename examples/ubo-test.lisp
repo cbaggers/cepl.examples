@@ -8,21 +8,21 @@
 (defstruct-g test
   (scale :float :accessor scale))
 
-(defun-g vert ((vert g-pc) &uniform (hmm test :ubo))
+(defun-g ubo-vert ((vert g-pc) &uniform (hmm test :ubo))
   (values (v! (* (pos vert) (scale hmm)) 1.0)
           (:smooth (col vert))))
 
-(defun-g frag ((color :vec4))
+(defun-g ubo-frag ((color :vec4))
   color)
 
-(def-g-> prog-1 ()
-  #'vert #'frag)
+(def-g-> draw-with-ubo ()
+  #'ubo-vert #'ubo-frag)
 
 (defun step-demo ()
   (step-host)
   (update-repl-link)
   (clear)
-  (map-g #'prog-1 *stream* :hmm *ubo*)
+  (map-g #'draw-with-ubo *stream* :hmm *ubo*)
   (swap))
 
 (defun run-loop ()
@@ -33,7 +33,7 @@
                                       (list (v! -0.5 -0.36 0) (v! 0 0 1 1)))
                                 :element-type 'g-pc)
         *stream* (make-buffer-stream *array*))
-  (map-g #'prog-1 nil :hmm *ubo*)
+  (map-g #'draw-with-ubo nil :hmm *ubo*)
   (loop :while *running* :do (continuable (step-demo))))
 
 (defun stop-loop ()

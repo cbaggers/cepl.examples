@@ -17,14 +17,14 @@
                  (cos (* 3 (+ (tan i) *loop*)))
                  0.0 0.0)))))
 
-(defun-g vert ((position :vec4) &uniform (i :int))
+(defun-g mtri-vert ((position :vec4) &uniform (i :int))
   (calc-pos position i))
 
-(defun-g frag ()
+(defun-g mtri-frag ()
   (v! (cos *loop*) (sin *loop*) 0.4 1.0))
 
 (def-g-> prog-1 ()
-  #'vert #'frag)
+  mtri-vert mtri-frag)
 
 (defun step-demo ()
   (step-host)

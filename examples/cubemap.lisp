@@ -5,14 +5,14 @@
 (defparameter strm nil)
 (defparameter cam nil)
 
-(defun-g vert ((vert :vec3) &uniform (mod-clip :mat4))
+(defun-g cube-vert ((vert :vec3) &uniform (mod-clip :mat4))
   (values (* mod-clip (v! vert 1))
           vert))
 
-(defun-g frag ((tc :vec3) &uniform (tex :sampler-cube))
+(defun-g cube-frag ((tc :vec3) &uniform (tex :sampler-cube))
   (texture tex tc))
 
-(def-g-> skybox () #'vert #'frag)
+(def-g-> skybox () #'cube-vert #'cube-frag)
 
 (defun make-cubemap-tex (&rest paths)
   (with-c-arrays (ca (mapcar (lambda (p)

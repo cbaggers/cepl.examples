@@ -8,15 +8,15 @@
   (position :vec3 :accessor pos)
   (color :vec4 :accessor col))
 
-(defun-g vert ((vert pos-col))
+(defun-g tri-vert ((vert pos-col))
   (values (v! (pos vert) 1.0)
           (col vert)))
 
-(defun-g frag ((color :vec4))
+(defun-g tri-frag ((color :vec4))
   color)
 
 (def-g-> prog-1 ()
-  #'vert #'frag)
+  tri-vert tri-frag)
 
 (defun step-demo ()
   (step-host)

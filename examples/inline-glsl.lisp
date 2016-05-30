@@ -8,7 +8,7 @@
   (position :vec3 :accessor pos)
   (color :vec4 :accessor col))
 
-(defun-g vert ((vert pos-col))
+(defun-g simple-vert ((vert pos-col))
   (values (v! (pos vert) 1.0)
           (col vert)))
 
@@ -36,7 +36,7 @@
 ;;----------------------------------------------------------------------
 
 (def-g-> prog-1 ()
-  #'vert #'frag-glsl)
+  #'simple-vert #'frag-glsl)
 
 (defun step-demo ()
   (step-host)

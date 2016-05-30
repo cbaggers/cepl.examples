@@ -6,14 +6,14 @@
 (defparameter *sam* nil)
 (defparameter *sam2* nil)
 
-(defun-g vert ((vert g-pt))
+(defun-g sampling-vert ((vert g-pt))
   (values (v! (pos vert) 1.0) (tex vert)))
 
-(defun-g frag ((tc :vec2) &uniform (tex :sampler-2d))
+(defun-g sampling-frag ((tc :vec2) &uniform (tex :sampler-2d))
   (texture tex tc))
 
-(def-g-> prog-1 ()
-  #'vert #'frag)
+(def-g-> sample-it ()
+  #'sampling-vert #'sampling-frag)
 
 (defun-t flip ()
   (repeat (before (seconds 1) t)
@@ -23,7 +23,7 @@
   (step-host)
   (update-repl-link)
   (clear)
-  (map-g #'prog-1 *stream* :tex (if (flip) *sam* *sam2*))
+  (map-g #'sample-it *stream* :tex (if (flip) *sam* *sam2*))
   (swap))
 
 (defun run-loop ()

@@ -19,16 +19,16 @@
 (defparameter *quad-stream*
   (make-buffer-stream *quad* :retain-arrays t))
 
-(defun-g vert ((quad g-pt))
+(defun-g passthrough-vert ((quad g-pt))
   (values (v! (pos quad) 1) (tex quad)))
 
 ;;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-(defun-g frag ((tc :vec2) &uniform (tex :sampler-2d))
+(defun-g passthrough-frag ((tc :vec2) &uniform (tex :sampler-2d))
   (texture tex tc))
 
 (def-g-> blit ()
-  #'vert #'frag)
+  #'passthrough-vert #'passthrough-frag)
 
 ;;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -38,7 +38,7 @@
      (* (texture tex (+ tc offset)) 0.3125)))
 
 (def-g-> smooth ()
-  #'vert #'qkern)
+  #'passthrough-vert #'qkern)
 
 ;;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -51,7 +51,7 @@
        (* (texture t3 tc) scale-effect))))
 
 (def-g-> combine ()
-  #'vert #'fourtex)
+  #'passthrough-vert #'fourtex)
 
 ;;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
