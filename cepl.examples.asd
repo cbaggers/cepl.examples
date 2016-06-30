@@ -7,10 +7,10 @@
   #+asdf-unicode :encoding #+asdf-unicode :utf-8
   :serial t
   :depends-on (#:cepl.sdl2 #:dendrite #:skitter #:cepl.skitter.sdl2
-			   #:livesupport #:cepl.devil #:classimp
+			   #:livesupport #:cepl.sdl2-image ;;#:classimp
 			   #:split-sequence #:temporal-functions)
   :components ((:file "package")
 	       (:file "examples/helpers/examples-data")
 	       (:file "examples/helpers/camera")
-	       (:file "examples/helpers/model-parsers")
+	       ;; (:file "examples/helpers/model-parsers")
 	       (:file "examples/helpers/meshes")))
