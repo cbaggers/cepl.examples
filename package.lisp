@@ -61,3 +61,11 @@
 	#:rtg-math #:varjo-lang #:livesupport
 	#:skitter.sdl2.keys #:skitter.sdl2.mouse-buttons
 	#:temporal-functions))
+
+(defpackage #:cepl.examples+physics
+  (:use #:cl #:cepl #:cepl.examples.camera
+	#:cepl.examples.misc
+	#:rtg-math #:varjo-lang #:livesupport
+	#:skitter.sdl2.keys #:skitter.sdl2.mouse-buttons
+	#:temporal-functions
+        #:cffi))

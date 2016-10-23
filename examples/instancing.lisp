@@ -28,7 +28,8 @@
    (radius :initform 1.0 :initarg :radius :accessor radius)))
 
 (defun load-model (filename &optional hard-rotate)
-  (let* ((result (second (cepl.examples.model-parsers:load-file filename)))
+  (let* ((result (second (cepl.examples.model-parsers:load-file
+                          filename)))
          (mesh (make-instance 'cepl.examples.meshes:mesh
                               :primitive-type :triangles
                               :vertices (first result)
@@ -45,7 +46,7 @@
 (defun init ()
   (setf *light* (make-instance 'light))
   (setf *camera* (make-camera))
-  (setf *wibble* (load-model "./bird/bird.3ds" ))
+  (setf *wibble* (load-model "./bird/bird.3ds"))
   (setf *tex* (cepl.sdl2-image:load-image-to-texture "./bird/char_bird_col.png"))
   (setf *pos-tex* (make-texture nil :dimensions 1000
                                 :element-type :rgba32f
@@ -118,8 +119,8 @@
 ;;--------------------------------------------------------------
 ;; controls
 
-(defun mouse-callback (event timestamp)
-  (declare (ignore timestamp))
+(defun mouse-callback (event &rest ignored)
+  (declare (ignore ignored))
   (let ((d (skitter:xy-pos-relative event)))
     (setf (rot *wibble*) (v:+ (rot *wibble*) (v! (/ (v:y d) -100.0)
 						 (/ (v:x d) -100.0)
@@ -132,8 +133,8 @@
   (setf (frame-size *camera*) new-dimensions)
   (map-g #'instanced-birds nil :cam-to-clip (cam->clip *camera*)))
 
-(defun window-size-callback (event timestamp)
-  (declare (ignore timestamp))
+(defun window-size-callback (event &rest ignored)
+  (declare (ignore ignored))
   (reshape (skitter:size-2d-vec event)))
 
 ;;--------------------------------------------------------------

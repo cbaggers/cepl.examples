@@ -45,8 +45,8 @@
 
 (defparameter mouse-ang (v! 0 0))
 
-(defun mouse-callback (event timestamp)
-  (declare (ignore timestamp))
+(defun mouse-callback (event &rest ignored)
+  (declare (ignore ignored))
   (let ((d (skitter:xy-pos-relative event)))
     (setf mouse-ang (v2:+ (v! (/ (v:x d) -150.0)
 			      (/ (v:y d) -150.0))

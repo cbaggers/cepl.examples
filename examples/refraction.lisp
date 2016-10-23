@@ -164,8 +164,8 @@
 ;;--------------------------------------------------------------
 ;; controls
 
-(defun mouse-callback (event timestamp)
-  (declare (ignore timestamp))
+(defun mouse-callback (event &rest ignored)
+  (declare (ignore ignored))
   (when (skitter:mouse-down-p mouse.left)
     (let ((d (skitter:xy-pos-relative event)))
       (cond
@@ -191,8 +191,8 @@
   (map-g #'standard-pass nil :cam-to-clip (cam->clip *camera*))
   (map-g #'refract-pass nil :cam-to-clip (cam->clip *camera*)))
 
-(defun window-size-callback (event timestamp)
-  (declare (ignore timestamp))
+(defun window-size-callback (event &rest ignored)
+  (declare (ignore ignored))
   (reshape (skitter:size-2d-vec event)))
 
 ;;--------------------------------------------------------------

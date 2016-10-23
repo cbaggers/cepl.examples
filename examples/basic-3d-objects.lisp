@@ -71,8 +71,8 @@
   (setf (frame-size *camera*) dimensions)
   (map-g #'render-widgets nil :cam->clip (cam->clip *camera*) :world->cam (world->cam *camera*)))
 
-(defun window-size-callback (event timestamp)
-  (declare (ignore timestamp))
+(defun window-size-callback (event &rest ignored)
+  (declare (ignore ignored))
   (reshape (skitter:size-2d-vec event)))
 
 (let ((running nil))
