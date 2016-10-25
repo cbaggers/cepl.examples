@@ -10,6 +10,8 @@ We also use skitter to manage our events, sdl2 as our host & classimp for model 
 
 It's a bit all over the place but will be cleaned up eventually.
 
-# WARNING
+# NOTE
 
-Currently requires the `feature-errors` branch of CEPL. This note will be removed once that branch is merged so it's best to wait until then :)
+The `master` branch of this repo should should with the CEPL from quicklisp. If you are have cloned CEPL locally then use the `cepl-master` branch.
+
+This branch policy was decided on 2016-10-26. It may take some time to get everything cleared up. Please file and issue if something doesnt work as expected.
