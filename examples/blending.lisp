@@ -6,6 +6,7 @@
 (defparameter box-index nil)
 (defparameter box-stream nil)
 (defparameter brick nil)
+(defparameter vp (make-viewport '(1024 768)))
 
 (defstruct box
   (pos (v! 0 0 -10))
@@ -30,6 +31,7 @@
 (defparameter bp (make-blending-params))
 (defparameter camera (make-camera))
 (defparameter factor 0)
+(defparameter fbo nil)
 
 (defun-g box-vert ((vert g-pnt) &uniform (model->clip :mat4))
   (values (* model->clip (v! (pos vert) 1))
@@ -45,21 +47,27 @@
 ;;- - - - - - - - - - - - - - - - - -
 
 (defun step-demo ()
-  (incf factor 0.12)
-  (setf (box-rot box-a) (q:from-axis-angle
-                         (v! (sin factor) (cos factor) 1) 10)
-        (box-rot box-b) (q:from-axis-angle
-                         (v! (sin (/ factor 5)) (cos (/ factor -3)) 1) 10))
-  (clear)
-  (map-g #'draw-box box-stream
-         :model->clip (model->clip box-a camera)
-         :tex brick)
-  (with-blending bp
-    (map-g #'draw-box box-stream
-           :model->clip (model->clip box-b camera)
-           :tex brick
-           :fac (+ 0.7 (* (sin factor) 0.3))))
-  (swap))
+  (with-viewport vp
+    (gl:clear-color 0 0 0 0)
+    (clear)
+    (incf factor 0.04)
+    (setf (box-rot box-a) (q:from-axis-angle
+                           (v! (sin factor) (cos factor) 1) 10)
+          (box-rot box-b) (q:from-axis-angle
+                           (v! (sin (/ factor 5)) (cos (/ factor -3)) 1) 10))
+
+    (with-fbo-bound (fbo :with-blending t)
+      (gl:clear-color 0 1 0 0)
+      (clear)
+      (map-g #'draw-box box-stream
+             :model->clip (model->clip box-a camera)
+             :tex brick)
+      (map-g #'draw-box box-stream
+             :model->clip (model->clip box-b camera)
+             :tex brick
+             :fac (min 1 (max 0.3 (/ (+ 1 (sin factor)) 2)))))
+    (cepl.misc:draw-texture sam :clear nil :swap nil)
+    (swap)))
 
 ;;- - - - - - - - - - - - - - - - - -
 

@@ -20,11 +20,15 @@
 (defun-g mtri-vert ((position :vec4) &uniform (i :int))
   (calc-pos position i))
 
+(defun-g mtri-vert ((position :vec3) &uniform (i :int))
+  (calc-pos (v! position 1) i))
+
 (defun-g mtri-frag ()
   (v! (cos *loop*) (sin *loop*) 0.4 1.0))
 
 (def-g-> prog-1 ()
-  mtri-vert mtri-frag)
+  (mtri-vert :vec4)
+  (mtri-frag))
 
 (defun step-demo ()
   (step-host)
