@@ -24,7 +24,8 @@
   (v! (cos *loop*) (sin *loop*) 0.4 1.0))
 
 (def-g-> prog-1 ()
-  mtri-vert mtri-frag)
+  (mtri-vert :vec4)
+  (mtri-frag))
 
 (defun step-demo ()
   (step-host)

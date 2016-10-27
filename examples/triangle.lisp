@@ -16,7 +16,8 @@
   color)
 
 (def-g-> prog-1 ()
-  tri-vert tri-frag)
+  (tri-vert pos-col)
+  (tri-frag :vec4))
 
 (defun step-demo ()
   (step-host)
