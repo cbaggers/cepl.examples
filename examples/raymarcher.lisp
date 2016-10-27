@@ -55,7 +55,9 @@
            (setf e (+ e (* eye-dir d)))))
     (v! output 1.0)))
 
-(def-g-> raymarcher () #'ray-vert #'ray-frag)
+(def-g-> raymarcher ()
+  (ray-vert :vec4)
+  (ray-frag :vec2))
 
 (let ((running nil))
   (defun run-loop ()
