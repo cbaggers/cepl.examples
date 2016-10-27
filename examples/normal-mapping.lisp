@@ -79,7 +79,8 @@
        (* t-col ambient-intensity))))
 
 (def-g-> frag-point-light ()
-  #'nm-vert #'nm-frag
+  (nm-vert g-pnt)
+  (nm-frag :vec3 :vec3 :vec4 :vec2)
   :post #'reshape)
 
 (defun entity-matrix (entity)
