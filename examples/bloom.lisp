@@ -28,7 +28,8 @@
   (texture tex tc))
 
 (def-g-> blit ()
-  #'passthrough-vert #'passthrough-frag)
+  (passthrough-vert g-pt)
+  (passthrough-frag :vec2))
 
 ;;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -38,7 +39,8 @@
      (* (texture tex (+ tc offset)) 0.3125)))
 
 (def-g-> smooth ()
-  #'passthrough-vert #'qkern)
+  (passthrough-vert g-pt)
+  (qkern :vec2))
 
 ;;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -51,7 +53,8 @@
        (* (texture t3 tc) scale-effect))))
 
 (def-g-> combine ()
-  #'passthrough-vert #'fourtex)
+  (passthrough-vert g-pt)
+  (fourtex :vec2))
 
 ;;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
