@@ -40,7 +40,8 @@
   (v! (s~ (texture tex (* tc 1)) :xyz) fac))
 
 (def-g-> draw-box ()
-  #'box-vert #'box-frag)
+  (box-vert g-pnt)
+  (box-frag :vec3 :vec2))
 
 ;;- - - - - - - - - - - - - - - - - -
 

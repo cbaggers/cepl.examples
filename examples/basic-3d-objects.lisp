@@ -16,7 +16,8 @@
   interp-color)
 
 (def-g-> render-widgets ()
-  #'b3d-vert #'b3d-frag)
+  (b3d-vert g-pc)
+  (b3d-frag :vec4))
 
 (defclass entity ()
   ((e-stream :initform nil :initarg :e-stream :accessor e-stream)
