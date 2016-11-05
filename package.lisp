@@ -23,6 +23,7 @@
            :near
            :cam->clip-func
            :cam->clip
+           :cam-viewport
            :world->cam
            :make-cam-clip-matrix))
 

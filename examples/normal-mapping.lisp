@@ -160,4 +160,5 @@
   (setf (pos *light*) (v! (* 10 (sin *loop-pos*))
                           10
                           (* 10 (cos *loop-pos*))))
-  (draw))
+  (with-viewport (cam-viewport *camera*)
+    (draw)))

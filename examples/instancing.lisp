@@ -89,7 +89,8 @@
        (* t-col ambient-intensity))))
 
 (def-g-> instanced-birds ()
-  #'instance-vert #'instance-frag
+  (instance-vert g-pnt)
+  (instance-frag :vec3 :vec3 :vec4 :vec2)
   :post #'reshape)
 
 (defun entity-matrix (entity)
@@ -159,4 +160,5 @@
   (setf (pos *light*) (v! (* 10 (sin *loop-pos*))
                           10
                           (* 10 (cos *loop-pos*))))
-  (draw))
+  (with-viewport (cam-viewport *camera*)
+    (draw)))

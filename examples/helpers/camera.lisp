@@ -24,8 +24,7 @@
 (defclass camera ()
   ((cam->clip :type (simple-array single-float (16)) :reader cam->clip)
    (cam->clip-func :initform nil :initarg :cam->clip-func )
-   (frame-size :reader frame-size :initarg :frame-size
-               :initform (cepl:viewport-dimensions (cepl:current-viewport)))
+   (viewport :initform (make-viewport) :initarg :viewport :reader cam-viewport)
    (near :type single-float :reader near :initarg :near)
    (far :type single-float :reader far :initarg :far)
    (fov :type single-float :reader fov :initarg :fov)))
@@ -37,6 +36,7 @@
 (defgeneric (setf near) (distance camera))
 (defgeneric (setf far) (distance camera))
 (defgeneric (setf fov) (angle camera))
+(defgeneric frame-size (camera))
 (defgeneric (setf frame-size) (frame camera))
 
 (defmethod update-cam->clip ((camera camera))
@@ -60,6 +60,9 @@
   (setf (slot-value camera 'fov) angle)
   (update-cam->clip camera))
 
+(defmethod frame-size ((camera camera))
+  (viewport-dimensions (cam-viewport camera)))
+
 (defmethod (setf frame-size) (frame (camera camera))
   (let ((frame
          (etypecase frame
@@ -67,7 +70,7 @@
 				(aref frame 1)))
             (cepl:viewport (cepl:viewport-dimensions frame))
             (list frame))))
-    (setf (slot-value camera 'frame-size) frame))
+    (setf (viewport-dimensions (cam-viewport camera)) frame))
   (update-cam->clip camera))
 
 (defgeneric world->cam (camera))
@@ -115,8 +118,7 @@
             (list frame)))
          (camera (make-instance 'pos-dir-cam
                                 :cam->clip-func cam->clip-function
-                                :near near :far far :fov fov
-                                :frame-size frame)))
+                                :near near :far far :fov fov)))
     (update-cam->clip camera)
     camera))
 

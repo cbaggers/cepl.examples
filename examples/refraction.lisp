@@ -114,11 +114,13 @@
     (+ r c)))
 
 (def-g-> standard-pass ()
-  #'standard-vert #'standard-frag
+  (standard-vert g-pnt)
+  (standard-frag :vec3 :vec3 :vec4 :vec2)
   :post #'reshape)
 
 (def-g-> refract-pass ()
-  #'refract-vert #'refract-frag
+  (refract-vert g-pnt)
+  (refract-frag :vec2)
   :post #'reshape)
 
 (defun two-pass (scene wib-stream bird-stream model-to-cam model-to-cam2
@@ -218,4 +220,5 @@
   (setf (pos *light*) (v! (* 10 (sin (* 0.01 *loop-pos*)))
                           10
                           (* 10 (cos (* 0.01 *loop-pos*)))))
-  (draw))
+  (with-viewport (cam-viewport *camera*)
+    (draw)))
