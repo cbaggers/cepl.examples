@@ -30,8 +30,8 @@
       ((and (= score 3) (= (v:x current) 0)) (v! 1 0 0 0))
       (t current))))
 
-(def-g-> copy-pass () #'pass-through-vert #'pass-through-frag)
-(def-g-> gol-pass () #'pass-through-vert #'the-meat!)
+(def-g-> copy-pass () (pass-through-vert g-pt) (pass-through-frag :vec2))
+(def-g-> gol-pass () (pass-through-vert g-pt) (the-meat! :vec2))
 
 (defun gol-render (source destination)
   (map-g-into (field-fbo destination) #'gol-pass *quad-stream*
