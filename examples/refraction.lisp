@@ -42,11 +42,11 @@
                               :index (second result)))
          (mesh~1 (if hard-rotate
                      (cepl.examples.meshes:transform-mesh
-		      mesh :rotation hard-rotate)
+                      mesh :rotation hard-rotate)
                      mesh)))
     (let ((gstream (make-buffer-stream
                     (cepl.examples.meshes:vertices mesh)
-		    :index-array (cepl.examples.meshes:indicies mesh))))
+                    :index-array (cepl.examples.meshes:indicies mesh))))
       (make-instance 'entity :rot (v! 1.57079633 1 0) :gstream gstream
                      :pos (v! 0 -0.4 -1) :mesh mesh~1))))
 
@@ -124,44 +124,44 @@
   :post #'reshape)
 
 (defun two-pass (scene wib-stream bird-stream model-to-cam model-to-cam2
-		 model-space-light-pos)
+                 model-space-light-pos)
   (clear scene)
   (map-g-into scene #'standard-pass wib-stream
-	      :textur *wib-sampler*
-	      :ambient-intensity (v! 0.2 0.2 0.2 1.0)
-	      :light-intensity (v! 1 1 1 0)
-	      :model-space-light-pos model-space-light-pos
-	      :model-to-cam model-to-cam)
+              :textur *wib-sampler*
+              :ambient-intensity (v! 0.2 0.2 0.2 1.0)
+              :light-intensity (v! 1 1 1 0)
+              :model-space-light-pos model-space-light-pos
+              :model-to-cam model-to-cam)
   (map-g #'refract-pass bird-stream
-	 :loop *loop-pos*
-	 :fbo-tex *scene-sampler*
-	 :bird-tex *bird-sampler2*
-	 :textur *bird-sampler*
-	 :model-to-cam model-to-cam2))
+         :loop *loop-pos*
+         :fbo-tex *scene-sampler*
+         :bird-tex *bird-sampler2*
+         :textur *bird-sampler*
+         :model-to-cam model-to-cam2))
 
 (defun draw ()
   (clear)
   (let* ((world-to-cam-matrix (world->cam *camera*))
          (cam-light-vec (m4:*v (entity-matrix *wibble*)
-			       (v! (pos *light*) 1.0))))
+                               (v! (pos *light*) 1.0))))
     (map-g #'standard-pass (gstream *wibble*)
-	   :textur *wib-sampler*
-	   :ambient-intensity (v! 0.2 0.2 0.2 1.0)
-	   :light-intensity (v! 1 1 1 0)
-	   :model-space-light-pos (v:s~ cam-light-vec :xyz)
-	   :model-to-cam (m4:* world-to-cam-matrix (entity-matrix *wibble*)))
+           :textur *wib-sampler*
+           :ambient-intensity (v! 0.2 0.2 0.2 1.0)
+           :light-intensity (v! 1 1 1 0)
+           :model-space-light-pos (v:s~ cam-light-vec :xyz)
+           :model-to-cam (m4:* world-to-cam-matrix (entity-matrix *wibble*)))
     (two-pass *scene* (gstream *wibble*) (gstream *bird*)
-	   (m4:* world-to-cam-matrix (entity-matrix *wibble*))
-	   (m4:* world-to-cam-matrix (entity-matrix *bird*))
-	   (v:s~ cam-light-vec :xyz)))
+              (m4:* world-to-cam-matrix (entity-matrix *wibble*))
+              (m4:* world-to-cam-matrix (entity-matrix *bird*))
+              (v:s~ cam-light-vec :xyz)))
   (swap))
 
 
 
 (defun entity-matrix (entity)
   (reduce #'m4:* (list (m4:translation (pos entity))
-		       (m4:rotation-from-euler (rot entity))
-		       (m4:scale (scale entity)))))
+                       (m4:rotation-from-euler (rot entity))
+                       (m4:scale (scale entity)))))
 
 ;;--------------------------------------------------------------
 ;; controls
@@ -171,19 +171,19 @@
   (when (skitter:mouse-down-p mouse.left)
     (let ((d (skitter:xy-pos-relative event)))
       (cond
-	;; move in z axis
-	((skitter:key-down-p key.lshift)
-	 (setf (pos *bird*)
-	       (v3:+ (pos *bird*) (v! 0 0 (/ (v:y d) 100.0)))))
-	;; move in y axis
-	((skitter:key-down-p key.lctrl)
-	 (setf (pos *bird*)
-	       (v3:+ (pos *bird*) (v! 0 (/ (v:y d) -100.0) 0))))
-	;; rotate
-	(t (setf (rot *bird*)
-		 (v3:+ (rot *bird*) (v! (/ (v:y d) -100.0)
-					(/ (v:x d) -100.0)
-					0.0))))))))
+        ;; move in z axis
+        ((skitter:key-down-p key.lshift)
+         (setf (pos *bird*)
+               (v3:+ (pos *bird*) (v! 0 0 (/ (v:y d) 100.0)))))
+        ;; move in y axis
+        ((skitter:key-down-p key.lctrl)
+         (setf (pos *bird*)
+               (v3:+ (pos *bird*) (v! 0 (/ (v:y d) -100.0) 0))))
+        ;; rotate
+        (t (setf (rot *bird*)
+                 (v3:+ (rot *bird*) (v! (/ (v:y d) -100.0)
+                                        (/ (v:x d) -100.0)
+                                        0.0))))))))
 
 ;;--------------------------------------------------------------
 ;; window
@@ -205,12 +205,12 @@
     (init)
     (setf running t)
     (skitter:whilst-listening-to
-	((#'window-size-callback (skitter:window 0) :size)
-	 (#'mouse-callback (skitter:mouse 0) :pos))
+        ((#'window-size-callback (skitter:window 0) :size)
+         (#'mouse-callback (skitter:mouse 0) :pos))
       (loop :while (and running (not (shutting-down-p))) :do
-	 (continuable
-	   (step-demo)
-	   (update-repl-link)))))
+         (continuable
+           (step-demo)
+           (update-repl-link)))))
   (defun stop-loop () (setf running nil)))
 
 

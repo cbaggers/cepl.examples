@@ -38,8 +38,8 @@
                      (cepl.examples.meshes:transform-mesh mesh :rotation hard-rotate)
                      mesh)))
     (let ((gstream (make-buffer-stream
-		    (cepl.examples.meshes:vertices mesh)
-		    :index-array (cepl.examples.meshes:indicies mesh))))
+                    (cepl.examples.meshes:vertices mesh)
+                    :index-array (cepl.examples.meshes:indicies mesh))))
       (make-instance 'entity :rot (v! 1.57079633 1 0) :gstream gstream
                      :pos (v! 0 -0.4 -1) :mesh mesh~1))))
 
@@ -54,9 +54,9 @@
   (setf *tex-sampler* (sample *tex*))
   (setf *pos-sampler* (sample *pos-tex*))
   (push-g (loop :for i :below 1000 :collect
-	     (v! (- (random 20.0) 10) (- (random 20.0) 10)
-		 (- -20 (random 10.0)) 1))
-	  *pos-tex*))
+             (v! (- (random 20.0) 10) (- (random 20.0) 10)
+                 (- -20 (random 10.0)) 1))
+          *pos-tex*))
 
 ;;--------------------------------------------------------------
 ;; drawing
@@ -73,10 +73,10 @@
           (tex data)))
 
 (defun-g instance-frag ((model-space-pos :vec3) (vertex-normal :vec3)
-			(diffuse-color :vec4) (tex-coord :vec2) &uniform
-			(model-space-light-pos :vec3) (light-intensity :vec4)
-			(ambient-intensity :vec4) (textur :sampler-2d)
-			(norm-map :sampler-2d))
+                        (diffuse-color :vec4) (tex-coord :vec2) &uniform
+                        (model-space-light-pos :vec3) (light-intensity :vec4)
+                        (ambient-intensity :vec4) (textur :sampler-2d)
+                        (norm-map :sampler-2d))
   (let* ((light-dir (normalize (- model-space-light-pos
                                   model-space-pos)))
          (t-norm (- (* (s~ (texture norm-map tex-coord) :xyz) 2)
@@ -95,17 +95,17 @@
 
 (defun entity-matrix (entity)
   (reduce #'m4:* (list (m4:translation (pos entity))
-		       (m4:rotation-from-euler (rot entity))
-		       (m4:scale (scale entity)))))
+                       (m4:rotation-from-euler (rot entity))
+                       (m4:scale (scale entity)))))
 
 (defun draw ()
   (clear)
   (let* ((world-to-cam-matrix (world->cam *camera*))
          (model-to-cam-matrix (m4:* world-to-cam-matrix
-				    (entity-matrix *wibble*)))
+                                    (entity-matrix *wibble*)))
          ;;(normal-to-cam-matrix (m4:to-matrix3 model-to-cam-matrix))
          (cam-light-vec (m4:*v (entity-matrix *wibble*)
-			       (v! (pos *light*) 1.0))))
+                               (v! (pos *light*) 1.0))))
     (with-instances 1000
       (map-g #'instanced-birds (gstream *wibble*)
              :model-space-light-pos (v:s~ cam-light-vec :xyz)
@@ -124,8 +124,8 @@
   (declare (ignore ignored))
   (let ((d (skitter:xy-pos-relative event)))
     (setf (rot *wibble*) (v:+ (rot *wibble*) (v! (/ (v:y d) -100.0)
-						 (/ (v:x d) -100.0)
-						 0.0)))))
+                                                 (/ (v:x d) -100.0)
+                                                 0.0)))))
 
 ;;--------------------------------------------------------------
 ;; window
@@ -146,12 +146,12 @@
     (init)
     (setf running t)
     (skitter:whilst-listening-to
-	((#'window-size-callback (skitter:window 0) :size)
-	 (#'mouse-callback (skitter:mouse 0) :pos))
+        ((#'window-size-callback (skitter:window 0) :size)
+         (#'mouse-callback (skitter:mouse 0) :pos))
       (loop :while (and running (not (shutting-down-p))) :do
-	 (continuable
-	   (step-demo)
-	   (update-repl-link)))))
+         (continuable
+           (step-demo)
+           (update-repl-link)))))
   (defun stop-loop () (setf running nil)))
 
 (defun step-demo ()

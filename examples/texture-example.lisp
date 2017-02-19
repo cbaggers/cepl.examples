@@ -31,7 +31,7 @@
   (update-repl-link)
   (clear)
   (map-g #'ripple-with-wobble *v-stream*
-	 :texture *sampler* :count *count* :pos-offset (v! 0 0 0 0))
+         :texture *sampler* :count *count* :pos-offset (v! 0 0 0 0))
   (incf *count* 0.08)
   (swap))
 
@@ -53,5 +53,5 @@
                         (make-texture temp)))
       (setf *sampler* (sample *texture*))
       (loop :while (and running (not (shutting-down-p))) :do
-	 (continuable (step-demo)))))
+         (continuable (step-demo)))))
   (defun stop-loop () (setf running nil)))

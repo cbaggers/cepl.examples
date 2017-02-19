@@ -5,7 +5,7 @@
 (defparameter *camera* nil)
 
 (defun-g b3d-vert ((vert g-pc) &uniform (model->world :mat4) (world->cam :mat4)
-		   (cam->clip :mat4))
+                   (cam->clip :mat4))
   (values (* cam->clip
              (* world->cam
                 (* model->world
@@ -33,8 +33,8 @@
   (setf *camera* (make-camera))
   (setf (pos *camera*) (v! 0 8 0))
   (map-g #'render-widgets nil
-	 :cam->clip (cam->clip *camera*)
-	 :world->cam (world->cam *camera*))
+         :cam->clip (cam->clip *camera*)
+         :world->cam (world->cam *camera*))
   (let* ((verts (make-gpu-array `((,(v! +1  +1  +1)  ,(v! 0  1  0  1))
                                   (,(v! -1  -1  +1)  ,(v! 0  0  1  1))
                                   (,(v! -1  +1  -1)  ,(v! 1  0  0  1))
@@ -46,7 +46,7 @@
                                 :element-type 'g-pc :dimensions 8))
          (indicies (make-gpu-array '(0 2 1   1 3 0   2 0 3   3 1 2
                                      5 6 4   4 7 5   7 4 6   6 5 7)
-				   :dimensions 24 :element-type :unsigned-short))
+                                   :dimensions 24 :element-type :unsigned-short))
          (e-stream (make-buffer-stream verts :index-array indicies)))
     (setf *entities*
           (mapcar (lambda (_) (make-entity :pos _ :e-stream e-stream))
@@ -55,8 +55,8 @@
 
 (defun update-entity (entity)
   (let ((m2w (reduce #'m4:* (list (m4:translation (pos entity))
-				  (m4:rotation-from-euler (rot entity))
-				  (m4:scale (scale entity))))))
+                                  (m4:rotation-from-euler (rot entity))
+                                  (m4:scale (scale entity))))))
     (setf (rot entity) (v:+ (rot entity) (v! 0.01 0.02 0)))
     (map-g #'render-widgets (e-stream entity) :model->world m2w)))
 
@@ -83,8 +83,8 @@
     (reshape (current-viewport))
     (setf running t)
     (skitter:whilst-listening-to
-	((#'window-size-callback (skitter:window 0) :size))
+        ((#'window-size-callback (skitter:window 0) :size))
       (loop :while (and running (not (shutting-down-p))) :do
-	 (continuable (step-demo)))))
+         (continuable (step-demo)))))
 
   (defun stop-loop () (setf running nil)))

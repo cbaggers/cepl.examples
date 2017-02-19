@@ -31,11 +31,11 @@
                               :index (second result)))
          (mesh~1 (if hard-rotate
                      (cepl.examples.meshes:transform-mesh
-		      mesh :rotation hard-rotate)
+                      mesh :rotation hard-rotate)
                      mesh)))
     (let ((gstream (make-buffer-stream
                     (cepl.examples.meshes:vertices mesh)
-		    :index-array (cepl.examples.meshes:indicies mesh))))
+                    :index-array (cepl.examples.meshes:indicies mesh))))
       (make-instance 'entity :rot (v! 1.57079633 1 0) :gstream gstream
                      :pos (v! 0 -0.3 -3) :mesh mesh~1))))
 
@@ -44,8 +44,8 @@
   (setf *camera* (make-camera))
   (reshape (current-viewport))
   (let ((wibble-path (merge-pathnames "./wibble.3ds" *examples-dir*))
-	(brick-dif-path  (merge-pathnames "./brick/col.png" *examples-dir*))
-	(brick-norm-path  (merge-pathnames "./brick/norm.png" *examples-dir*)))
+        (brick-dif-path  (merge-pathnames "./brick/col.png" *examples-dir*))
+        (brick-norm-path  (merge-pathnames "./brick/norm.png" *examples-dir*)))
     (setf *wibble* (load-model wibble-path (v! pi 0 0)))
     (setf *tex* (cepl.sdl2-image:load-image-to-texture brick-dif-path))
     (setf *sampler* (sample *tex*))
@@ -85,24 +85,24 @@
 
 (defun entity-matrix (entity)
   (reduce #'m4:* (list (m4:translation (pos entity))
-		       (m4:rotation-from-euler (rot entity))
-		       (m4:scale (scale entity)))))
+                       (m4:rotation-from-euler (rot entity))
+                       (m4:scale (scale entity)))))
 
 (defun draw ()
   (clear)
   (let* ((world-to-cam-matrix (world->cam *camera*))
          (model-to-cam-matrix (m4:* world-to-cam-matrix
-				    (entity-matrix *wibble*)))
+                                    (entity-matrix *wibble*)))
          ;;(normal-to-cam-matrix (m4:to-matrix3 model-to-cam-matrix))
          (cam-light-vec (m4:*v (entity-matrix *wibble*)
-			       (v! (pos *light*) 1.0))))
+                               (v! (pos *light*) 1.0))))
     (map-g #'frag-point-light (gstream *wibble*)
-	   :model-space-light-pos (v:s~ cam-light-vec :xyz)
-	   :light-intensity (v! 1 1 1 0)
-	   :model-to-cam model-to-cam-matrix
-	   :norm-map *normal-sampler*
-	   :ambient-intensity (v! 0.2 0.2 0.2 1.0)
-	   :textur *sampler*))
+           :model-space-light-pos (v:s~ cam-light-vec :xyz)
+           :light-intensity (v! 1 1 1 0)
+           :model-to-cam model-to-cam-matrix
+           :norm-map *normal-sampler*
+           :ambient-intensity (v! 0.2 0.2 0.2 1.0)
+           :textur *sampler*))
   (swap))
 
 ;;--------------------------------------------------------------
@@ -113,19 +113,19 @@
   (when (skitter:mouse-down-p mouse.left)
     (let ((d (skitter:xy-pos-relative event)))
       (cond
-	;; move in z axis
-	((skitter:key-down-p key.lshift)
-	 (setf (pos *wibble*)
-	       (v3:+ (pos *wibble*) (v! 0 0 (/ (v:y d) 100.0)))))
-	;; move in y axis
-	((skitter:key-down-p key.lctrl)
-	 (setf (pos *wibble*)
-	       (v3:+ (pos *wibble*) (v! 0 (/ (v:y d) -100.0) 0))))
-	;; rotate
-	(t (setf (rot *wibble*)
-		 (v:+ (rot *wibble*) (v! (/ (v:y d) -100.0)
-					  (/ (v:x d) -100.0)
-					  0.0))))))))
+        ;; move in z axis
+        ((skitter:key-down-p key.lshift)
+         (setf (pos *wibble*)
+               (v3:+ (pos *wibble*) (v! 0 0 (/ (v:y d) 100.0)))))
+        ;; move in y axis
+        ((skitter:key-down-p key.lctrl)
+         (setf (pos *wibble*)
+               (v3:+ (pos *wibble*) (v! 0 (/ (v:y d) -100.0) 0))))
+        ;; rotate
+        (t (setf (rot *wibble*)
+                 (v:+ (rot *wibble*) (v! (/ (v:y d) -100.0)
+                                         (/ (v:x d) -100.0)
+                                         0.0))))))))
 
 ;;--------------------------------------------------------------
 ;; window
@@ -146,12 +146,12 @@
     (init)
     (setf running t)
     (skitter:whilst-listening-to
-	((#'window-size-callback (skitter:window 0) :size)
-	 (#'mouse-callback (skitter:mouse 0) :pos))
+        ((#'window-size-callback (skitter:window 0) :size)
+         (#'mouse-callback (skitter:mouse 0) :pos))
       (loop :while (and running (not (shutting-down-p))) :do
-	 (continuable
-	   (step-demo)
-	   (update-repl-link)))))
+         (continuable
+           (step-demo)
+           (update-repl-link)))))
   (defun stop-loop () (setf running nil)))
 
 (defun step-demo ()

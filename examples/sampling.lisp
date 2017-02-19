@@ -17,7 +17,7 @@
 
 (defun-t flip ()
   (repeat (before (seconds 1) t)
-	  (before (seconds 1) nil)))
+          (before (seconds 1) nil)))
 
 (defun step-demo ()
   (step-host)
@@ -36,8 +36,8 @@
                   :retain-arrays t)
         *tex* (cepl.sdl2-image:load-image-to-texture
                (merge-pathnames "brick/col.png" *examples-dir*))
-	*sam* (sample *tex*)
-	*sam2* (sample *tex* :wrap :clamp-to-edge))
+        *sam* (sample *tex*)
+        *sam2* (sample *tex* :wrap :clamp-to-edge))
   (loop :while *running* :do (continuable (step-demo))))
 
 (defun stop-loop ()
