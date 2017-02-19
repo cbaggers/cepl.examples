@@ -40,7 +40,7 @@
 (defun step-demo ()
   (clear)
   (map-g #'skybox strm
-	 :tex sampler :mod-clip (m4:* (cam->clip cam) (world->cam cam)))
+         :tex sampler :mod-clip (m4:* (cam->clip cam) (world->cam cam)))
   (swap))
 
 (defparameter mouse-ang (v! 0 0))
@@ -49,11 +49,11 @@
   (declare (ignore ignored))
   (let ((d (skitter:xy-pos-relative event)))
     (setf mouse-ang (v2:+ (v! (/ (v:x d) -150.0)
-			      (/ (v:y d) -150.0))
-			  mouse-ang))
+                              (/ (v:y d) -150.0))
+                          mouse-ang))
     (setf (dir cam) (v! (sin (v:x mouse-ang))
-			(sin (v:y mouse-ang))
-			(cos (v:x mouse-ang))))))
+                        (sin (v:y mouse-ang))
+                        (cos (v:x mouse-ang))))))
 
 (let ((running nil))
   (defun run-loop ()
@@ -62,10 +62,10 @@
     (format t "-starting-")
     (skitter:whilst-listening-to ((#'mouse-callback (skitter:mouse 0) :pos))
       (loop :while running
-	 :do (continuable
-	       (update-repl-link)
-	       (step-host)
-	       (step-demo))))
+         :do (continuable
+               (update-repl-link)
+               (step-host)
+               (step-demo))))
     (print "-shutting down-")
     nil)
   (defun stop-loop () (setf running nil)))

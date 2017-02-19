@@ -9,11 +9,11 @@
 (defparameter *quad*
   (make-gpu-array
    (list (list (v! -1.0   1.0 0 0) (v!  0.0   1.0))
-	 (list (v! -1.0  -1.0 0 0) (v!  0.0   0.0))
-	 (list (v!  1.0  -1.0 0 0) (v!  1.0   0.0))
-	 (list (v! -1.0   1.0 0 0) (v!  0.0   1.0))
-	 (list (v!  1.0  -1.0 0 0) (v!  1.0   0.0))
-	 (list (v!  1.0   1.0 0 0) (v!  1.0   1.0)))
+         (list (v! -1.0  -1.0 0 0) (v!  0.0   0.0))
+         (list (v!  1.0  -1.0 0 0) (v!  1.0   0.0))
+         (list (v! -1.0   1.0 0 0) (v!  0.0   1.0))
+         (list (v!  1.0  -1.0 0 0) (v!  1.0   0.0))
+         (list (v!  1.0   1.0 0 0) (v!  1.0   1.0)))
    :element-type 'g-pt
    :dimensions 6))
 (defparameter *quad-stream*
@@ -82,25 +82,25 @@
   (map-g-into (fbos-c2 fbos) #'blit stream :tex sx)
   (map-g-into (fbos-c3 fbos) #'blit stream :tex sx)
   (map-g-into (fbos-h0 fbos) #'smooth stream
-	      :tex (fbos-sc0 fbos) :offset (v! (/ 1.2 512) 0))
+              :tex (fbos-sc0 fbos) :offset (v! (/ 1.2 512) 0))
   (map-g-into (fbos-h1 fbos) #'smooth stream
-	      :tex (fbos-sc1 fbos) :offset (v! (/ 1.2 256) 0))
+              :tex (fbos-sc1 fbos) :offset (v! (/ 1.2 256) 0))
   (map-g-into (fbos-h2 fbos) #'smooth stream
-	      :tex (fbos-sc2 fbos) :offset (v! (/ 1.2 128) 0))
+              :tex (fbos-sc2 fbos) :offset (v! (/ 1.2 128) 0))
   (map-g-into (fbos-h3 fbos) #'smooth stream
-	      :tex (fbos-sc3 fbos) :offset (v! (/ 1.2 64) 0))
+              :tex (fbos-sc3 fbos) :offset (v! (/ 1.2 64) 0))
   (map-g-into (fbos-c0 fbos) #'smooth stream
-	      :tex (fbos-sh0 fbos) :offset (v! 0 (/ 1.2 512)))
+              :tex (fbos-sh0 fbos) :offset (v! 0 (/ 1.2 512)))
   (map-g-into (fbos-c1 fbos) #'smooth stream
-	      :tex (fbos-sh1 fbos) :offset (v! 0 (/ 1.2 256)))
+              :tex (fbos-sh1 fbos) :offset (v! 0 (/ 1.2 256)))
   (map-g-into (fbos-c2 fbos) #'smooth stream
-	      :tex (fbos-sh2 fbos) :offset (v! 0 (/ 1.2 128)))
+              :tex (fbos-sh2 fbos) :offset (v! 0 (/ 1.2 128)))
   (map-g-into (fbos-c3 fbos) #'smooth stream
-	      :tex (fbos-sh3 fbos) :offset (v! 0 (/ 1.2 64)))
+              :tex (fbos-sh3 fbos) :offset (v! 0 (/ 1.2 64)))
   (map-g #'combine stream
-	 :t0 (fbos-sc0 fbos) :t1 (fbos-sc1 fbos)
-	 :t2 (fbos-sc2 fbos) :t3 (fbos-sc3 fbos)
-	 :scale-effect (abs (sin *loop*))))
+         :t0 (fbos-sc0 fbos) :t1 (fbos-sc1 fbos)
+         :t2 (fbos-sc2 fbos) :t3 (fbos-sc3 fbos)
+         :scale-effect (abs (sin *loop*))))
 
 (defun step-demo ()
   (incf *loop* 0.01)

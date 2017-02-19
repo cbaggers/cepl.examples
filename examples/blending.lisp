@@ -48,9 +48,9 @@
 (defun step-demo ()
   (incf factor 0.12)
   (setf (box-rot box-a) (q:from-axis-angle
-                         (v! (sin factor) (cos factor) 1) 10)
+                         (v! (sin factor) (cos factor) 1) 10s0)
         (box-rot box-b) (q:from-axis-angle
-                         (v! (sin (/ factor 5)) (cos (/ factor -3)) 1) 10))
+                         (v! (sin (/ factor 5)) (cos (/ factor -3)) 1) 10s0))
   (clear)
   (map-g #'draw-box box-stream
          :model->clip (model->clip box-a camera)
@@ -70,8 +70,8 @@
           box-index (make-gpu-array i :element-type :ushort)
           box-stream (make-buffer-stream box-data :index-array box-index)
           brick (sample
-		 (cepl.sdl2-image:load-image-to-texture
-		  (merge-pathnames "brick/col.png" *examples-dir*))))))
+                 (cepl.sdl2-image:load-image-to-texture
+                  (merge-pathnames "brick/col.png" *examples-dir*))))))
 
 (let ((running t))
   (defun run-loop ()
