@@ -10,7 +10,7 @@
   (values (v! (pos vert) 1)
           (:smooth (tex vert))))
 
-(defun-g tex-frag ((tex-coord :vec2) &uniform (texture :sampler-2d)
+(defun-g tex-frag ((tex-coord :vec2) &uniform (tex :sampler-2d)
                    (count :float) (pos-offset :vec4))
   (let* ((rip-size 0.02) (centre (v! 0.0 0.0)) (damp 0.6)
          (peaks 9.0)
@@ -20,18 +20,18 @@
                        (sin (- count (* (y tex-coord) peaks))))
                     2.0))
          (rip-offset (* (* (normalize dif) rip-size) height damp)))
-    (+ (texture texture (+ rip-offset tex-coord))
+    (+ (texture tex (+ rip-offset tex-coord))
        (v! (* -0.2 height) (* -0.2 height) 0.0 0.0))))
 
 (def-g-> ripple-with-wobble ()
-  #'tex-vert #'tex-frag)
+  (tex-vert g-pt) (tex-frag :vec2))
 
 (defun step-demo ()
   (step-host)
   (update-repl-link)
   (clear)
   (map-g #'ripple-with-wobble *v-stream*
-         :texture *sampler* :count *count* :pos-offset (v! 0 0 0 0))
+	 :tex *sampler* :count *count* :pos-offset (v! 0 0 0 0))
   (incf *count* 0.08)
   (swap))
 
