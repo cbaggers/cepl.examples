@@ -23,7 +23,6 @@
 
 (defclass camera ()
   ((cam->clip :type (simple-array single-float (16)) :reader cam->clip)
-   (cam->clip-func :initform nil :initarg :cam->clip-func )
    (viewport :initform (make-viewport) :initarg :viewport :reader cam-viewport)
    (near :type single-float :reader near :initarg :near)
    (far :type single-float :reader far :initarg :far)
@@ -41,12 +40,12 @@
 
 (defmethod update-cam->clip ((camera camera))
   (setf (slot-value camera 'cam->clip)
-        (funcall (slot-value camera 'cam->clip-func)
-                 (first (frame-size camera))
-                 (second (frame-size camera))
-                 (near camera)
-                 (far camera)
-                 (fov camera))))
+        (rtg-math.projection:perspective
+         (coerce (first (frame-size camera)) 'single-float)
+         (coerce (second (frame-size camera)) 'single-float)
+         (coerce (near camera) 'single-float)
+         (coerce (far camera) 'single-float)
+         (coerce (fov camera) 'single-float))))
 
 (defmethod (setf near) (distance (camera camera))
   (setf (slot-value camera 'near) distance)
@@ -107,18 +106,8 @@
             (m4:melm result 2 3) (aref eye-inv 2))
       result)))
 
-(defun make-camera (&optional (frame (cepl:current-viewport))
-                      (near 1.0) (far 1000.0) (fov 120.0)
-                      (cam->clip-function #'rtg-math.projection:perspective))
-  (let* ((frame
-          (etypecase frame
-            ((simple-array single-float (2)) (list (aref frame 0)
-                                                   (aref frame 1)))
-            (cepl:viewport (cepl:viewport-dimensions frame))
-            (list frame)))
-         (camera (make-instance 'pos-dir-cam
-                                :cam->clip-func cam->clip-function
-                                :near near :far far :fov fov)))
+(defun make-camera (&optional (near 1.0) (far 1000.0) (fov 120.0))
+  (let* ((camera (make-instance 'pos-dir-cam :near near :far far :fov fov)))
     (update-cam->clip camera)
     camera))
 
