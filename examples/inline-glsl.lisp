@@ -36,7 +36,8 @@
 ;;----------------------------------------------------------------------
 
 (def-g-> prog-1 ()
-  #'(simple-vert pos-col) #'(frag-glsl :vec3))
+  (simple-vert pos-col)
+  (frag-glsl :vec4))
 
 (defun step-demo ()
   (step-host)
