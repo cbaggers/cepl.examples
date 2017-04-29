@@ -9,7 +9,7 @@
   (pos (v! 0 0 -10))
   (rot (q:identity)))
 
-(defparameter sphere-a (make-sphere :pos (v! 0 0 -1)))
+(defparameter sphere-a (make-sphere :pos (v! 0 0 -1.2)))
 
 ;;- - - - - - - - - - - - - - - - - -
 
@@ -117,7 +117,7 @@
 ;;- - - - - - - - - - - - - - - - - -
 
 (defun step-demo ()
-  (incf factor 0.01)
+  (incf factor 0.001)
   (setf (sphere-rot sphere-a)
         (q:from-axis-angle (v! (sin factor) (cos factor) 1) 10s0))
   (clear)
