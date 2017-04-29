@@ -97,12 +97,14 @@
                  (cepl.sdl2-image:load-image-to-texture
                   (merge-pathnames "brick/col.png" *examples-dir*))))))
 
-(let ((running t))
+(let ((running nil))
   (defun run-loop ()
     (unless brick (init))
-    (loop :while (and running (not (shutting-down-p))) :do
-       (continuable
-         (step-host)
-         (update-repl-link)
-         (step-demo))))
+    (setf running t)
+    (cepl-utils:with-setf (depth-test-function *cepl-context*) #'<=
+      (loop :while (and running (not (shutting-down-p))) :do
+         (continuable
+           (step-host)
+           (update-repl-link)
+           (step-demo)))))
   (defun stop-loop () (setf running nil)))
