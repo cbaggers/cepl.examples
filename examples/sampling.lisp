@@ -13,7 +13,8 @@
   (texture tex tc))
 
 (def-g-> sample-it ()
-  #'sampling-vert #'sampling-frag)
+  (sampling-vert g-pt)
+  (sampling-frag :vec2))
 
 (defun-t flip ()
   (repeat (before (seconds 1) t)
