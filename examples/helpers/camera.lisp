@@ -106,7 +106,7 @@
             (m4:melm result 2 3) (aref eye-inv 2))
       result)))
 
-(defun make-camera (&optional (near 1.0) (far 1000.0) (fov 120.0))
+(defun make-camera (&optional (near 1.0) (far 1000.0) (fov 90.0))
   (let* ((camera (make-instance 'pos-dir-cam :near near :far far :fov fov)))
     (update-cam->clip camera)
     camera))
