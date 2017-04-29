@@ -29,7 +29,7 @@
 ;;
 (def-glsl-stage frag-glsl (("color_in" :vec4) &context :330 :fragment)
   "void main() {
-       color_out = color_in;
+       color_out = v_in.color_in;
    }"
   (("color_out" :vec4)))
 
