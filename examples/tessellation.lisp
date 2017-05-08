@@ -9,7 +9,7 @@
   (pos (v! 0 0 -10))
   (rot (q:identity)))
 
-(defparameter sphere-a (make-sphere :pos (v! 0 0 -1.2)))
+(defparameter sphere-a (make-sphere :pos (v! 0 0 -1.5)))
 
 ;;- - - - - - - - - - - - - - - - - -
 
@@ -138,9 +138,10 @@
                  (cepl.sdl2-image:load-image-to-texture
                   (merge-pathnames "brick/col.png" *examples-dir*))))))
 
-(let ((running t))
+(let ((running nil))
   (defun run-loop ()
     (unless brick (init))
+    (setf running t)
     (loop :while (and running (not (shutting-down-p))) :do
        (continuable
          (step-host)
