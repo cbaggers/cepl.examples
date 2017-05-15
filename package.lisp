@@ -7,7 +7,7 @@
   (:export :*examples-dir*))
 
 (defpackage #:cepl.examples.camera
-  (:use #:cl #:cepl #:varjo-lang)
+  (:use #:cl #:cepl :varjo)
   (:export :camera
            :make-camera
            :orthographic-projection
@@ -52,21 +52,21 @@
 
 (defpackage #:cepl.examples
   (:use #:cl #:cepl #:cepl.examples.misc
-	#:rtg-math #:varjo-lang #:livesupport
-	#:skitter.sdl2.keys #:skitter.sdl2.mouse-buttons
-	#:temporal-functions))
+        #:rtg-math :varjo #:livesupport
+        #:skitter.sdl2.keys #:skitter.sdl2.mouse-buttons
+        #:temporal-functions))
 
 (defpackage #:cepl.examples+camera
   (:use #:cl #:cepl #:cepl.examples.camera
-	#:cepl.examples.misc
-	#:rtg-math #:varjo-lang #:livesupport
-	#:skitter.sdl2.keys #:skitter.sdl2.mouse-buttons
-	#:temporal-functions))
+        #:cepl.examples.misc
+        #:rtg-math :varjo #:livesupport
+        #:skitter.sdl2.keys #:skitter.sdl2.mouse-buttons
+        #:temporal-functions))
 
 (defpackage #:cepl.examples+physics
   (:use #:cl #:cepl #:cepl.examples.camera
-	#:cepl.examples.misc
-	#:rtg-math #:varjo-lang #:livesupport
-	#:skitter.sdl2.keys #:skitter.sdl2.mouse-buttons
-	#:temporal-functions
+        #:cepl.examples.misc
+        #:rtg-math :varjo #:livesupport
+        #:skitter.sdl2.keys #:skitter.sdl2.mouse-buttons
+        #:temporal-functions
         #:cffi))

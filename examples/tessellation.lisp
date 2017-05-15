@@ -81,7 +81,7 @@
           (aref patch-distance 2)
           facet-normal
           (v! 0 0 1))
-    (varjo-lang::end-primitive)
+    (end-primitive)
     (values)))
 
 (defun-g sphere-frag ((patch-distance :vec3) (facet-normal :vec3)
