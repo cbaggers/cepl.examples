@@ -133,7 +133,8 @@
                              :lines-of-latitude 10)
     (setf sphere-stream (make-buffer-stream
                          (make-gpu-array d :element-type 'g-pnt)
-                         :index-array (make-gpu-array i :element-type :ushort))
+                         :index-array (make-gpu-array i :element-type :ushort)
+                         :draw-mode :patches)
           brick (sample
                  (cepl.sdl2-image:load-image-to-texture
                   (merge-pathnames "brick/col.png" *examples-dir*))))))
