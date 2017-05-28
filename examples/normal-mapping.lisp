@@ -47,9 +47,9 @@
         (brick-dif-path  (merge-pathnames "./brick/col.png" *examples-dir*))
         (brick-norm-path  (merge-pathnames "./brick/norm.png" *examples-dir*)))
     (setf *wibble* (load-model wibble-path (v! pi 0 0)))
-    (setf *tex* (cepl.sdl2-image:load-image-to-texture brick-dif-path))
+    (setf *tex* (dirt:load-image-to-texture brick-dif-path))
     (setf *sampler* (sample *tex*))
-    (setf *normal-map* (cepl.sdl2-image:load-image-to-texture brick-norm-path))
+    (setf *normal-map* (dirt:load-image-to-texture brick-norm-path))
     (setf *normal-sampler* (sample *normal-map*))))
 
 ;;--------------------------------------------------------------

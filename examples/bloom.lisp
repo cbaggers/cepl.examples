@@ -116,7 +116,7 @@
 (defun run-loop ()
   (setf *running* t)
   (unless cols
-    (setf cols (cepl.sdl2-image:load-image-to-texture
+    (setf cols (dirt:load-image-to-texture
                 (merge-pathnames "ThickCloudsWater/front.png" *examples-dir*)))
     (setf cols-sampler (sample cols)))
   (loop :while *running* :do (continuable (step-demo))))

@@ -135,7 +135,7 @@
                          (make-gpu-array d :element-type 'g-pnt)
                          :index-array (make-gpu-array i :element-type :ushort))
           brick (sample
-                 (cepl.sdl2-image:load-image-to-texture
+                 (dirt:load-image-to-texture
                   (merge-pathnames "brick/col.png" *examples-dir*))))))
 
 (let ((running nil))

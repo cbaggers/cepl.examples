@@ -59,11 +59,11 @@
                              0 (v! pi 0 0)))
   (setf (v:z (pos *wibble*)) -3.0)
   (setf *bird* (load-model (merge-pathnames "bird/bird.3ds" *examples-dir*) 1 (v! pi 0 0)))
-  (setf *bird-tex* (cepl.sdl2-image:load-image-to-texture
+  (setf *bird-tex* (dirt:load-image-to-texture
                     (merge-pathnames "water.jpg" *examples-dir*)))
-  (setf *bird-tex2* (cepl.sdl2-image:load-image-to-texture
+  (setf *bird-tex2* (dirt:load-image-to-texture
                      (merge-pathnames "bird/char_bird_col.png" *examples-dir*)))
-  (setf *wib-tex* (cepl.sdl2-image:load-image-to-texture
+  (setf *wib-tex* (dirt:load-image-to-texture
                    (merge-pathnames "brick/col.png" *examples-dir*)))
   (setf *bird-sampler* (sample *bird-tex*))
   (setf *bird-sampler2* (sample *bird-tex2*))

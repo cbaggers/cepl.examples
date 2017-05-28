@@ -47,7 +47,7 @@
   (setf *light* (make-instance 'light))
   (setf *camera* (make-camera))
   (setf *wibble* (load-model "./bird/bird.3ds"))
-  (setf *tex* (cepl.sdl2-image:load-image-to-texture "./bird/char_bird_col.png"))
+  (setf *tex* (dirt:load-image-to-texture "./bird/char_bird_col.png"))
   (setf *pos-tex* (make-texture nil :dimensions 1000
                                 :element-type :rgba32f
                                 :buffer-storage t))
