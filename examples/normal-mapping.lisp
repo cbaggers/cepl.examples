@@ -75,7 +75,8 @@
           (clamp (dot (normalize (* (+ vertex-normal t-norm) 0.5)) light-dir)
                  0.0 1.0))
          (t-col (texture textur tex-coord)))
-    (+ (* t-col light-intensity cos-ang-incidence)
+    (+ (* (* t-col light-intensity)
+          cos-ang-incidence)
        (* t-col ambient-intensity))))
 
 (def-g-> frag-point-light ()

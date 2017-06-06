@@ -90,7 +90,7 @@
          (cos-ang-incidence
           (clamp (dot (normalize vertex-normal) light-dir) 0.0 1.0))
          (t-col (texture textur (v! (x tex-coord) (- (y tex-coord))))))
-    (+ (* t-col light-intensity cos-ang-incidence)
+    (+ (* (* t-col light-intensity) cos-ang-incidence)
        (* t-col ambient-intensity))))
 
 (defun-g refract-vert ((data g-pnt) &uniform (model-to-cam :mat4)
