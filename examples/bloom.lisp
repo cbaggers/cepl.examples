@@ -1,7 +1,5 @@
 (in-package :cepl.examples)
 
-;; NOTE: Ensure you have loaded cepl-image-helper (or cepl-default)
-
 (defparameter cols nil)
 (defparameter cols-sampler nil)
 

@@ -16,7 +16,7 @@
   color)
 
 (def-g-> draw-with-ubo ()
-  #'ubo-vert #'ubo-frag)
+  (ubo-vert g-pc) (ubo-frag :vec4))
 
 (defun step-demo ()
   (step-host)
