@@ -82,8 +82,7 @@
     (init)
     (reshape (current-viewport))
     (setf running t)
-    (whilst-listening-to
-        ((#'window-size-callback (window 0) :size))
+    (whilst-listening-to ((#'window-size-callback (window 0) :size))
       (loop :while (and running (not (shutting-down-p))) :do
          (continuable (step-demo)))))
 

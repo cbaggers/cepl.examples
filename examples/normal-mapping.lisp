@@ -110,7 +110,7 @@
 
 (defun mouse-callback (moved &rest ignored)
   (declare (ignore ignored))
-  (when (mouse-down-p mouse.left)
+  (when (mouse-down-p mouse.left )
     (cond
       ;; move in z axis
       ((key-down-p key.lshift)
@@ -144,9 +144,8 @@
   (defun run-loop ()
     (init)
     (setf running t)
-    (whilst-listening-to
-        ((#'window-size-callback (window 0) :size)
-         (#'mouse-callback (mouse 0) :move))
+    (whilst-listening-to ((#'window-size-callback (window 0) :size)
+                          (#'mouse-callback (mouse 0) :move))
       (loop :while (and running (not (shutting-down-p))) :do
          (continuable
            (step-demo)
