@@ -2,11 +2,11 @@
 
 ;; helper packages
 
-(defpackage #:cepl.examples.misc
+(uiop:define-package #:cepl.examples.misc
   (:use #:cl #:cepl)
   (:export :*examples-dir*))
 
-(defpackage #:cepl.examples.camera
+(uiop:define-package #:cepl.examples.camera
   (:use #:cl #:cepl #:vari)
   (:export :camera
            :make-camera
@@ -27,7 +27,7 @@
            :world->cam
            :make-cam-clip-matrix))
 
-(defpackage :cepl.examples.model-parsers
+(uiop:define-package :cepl.examples.model-parsers
   (:use :cl :cepl)
   (:export :load-file
            :meshes->lists
@@ -37,7 +37,7 @@
            :scene-meshes->gpu
            :calc-type))
 
-(defpackage :cepl.examples.meshes
+(uiop:define-package :cepl.examples.meshes
   (:use :cl :cffi :split-sequence :cepl)
   (:export :mesh
            :vertices
@@ -50,23 +50,23 @@
 
 ;; packages used in the examples
 
-(defpackage #:cepl.examples
+(uiop:define-package #:cepl.examples
   (:use #:cl #:cepl #:cepl.examples.misc
         #:rtg-math #:vari #:livesupport
-        #:skitter.sdl2.keys #:skitter.sdl2.mouse-buttons
+        #:cepl.skitter
         #:temporal-functions))
 
-(defpackage #:cepl.examples+camera
+(uiop:define-package #:cepl.examples+camera
   (:use #:cl #:cepl #:cepl.examples.camera
         #:cepl.examples.misc
         #:rtg-math #:vari #:livesupport
-        #:skitter.sdl2.keys #:skitter.sdl2.mouse-buttons
+        #:cepl.skitter
         #:temporal-functions))
 
-(defpackage #:cepl.examples+physics
+(uiop:define-package #:cepl.examples+physics
   (:use #:cl #:cepl #:cepl.examples.camera
         #:cepl.examples.misc
         #:rtg-math #:vari #:livesupport
-        #:skitter.sdl2.keys #:skitter.sdl2.mouse-buttons
+        #:cepl.skitter
         #:temporal-functions
         #:cffi))

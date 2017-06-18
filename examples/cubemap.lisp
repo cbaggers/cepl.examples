@@ -45,22 +45,21 @@
 
 (defparameter mouse-ang (v! 0 0))
 
-(defun mouse-callback (event &rest ignored)
+(defun mouse-callback (moved &rest ignored)
   (declare (ignore ignored))
-  (let ((d (skitter:xy-pos-relative event)))
-    (setf mouse-ang (v2:+ (v! (/ (v:x d) -150.0)
-                              (/ (v:y d) -150.0))
-                          mouse-ang))
-    (setf (dir cam) (v! (sin (v:x mouse-ang))
-                        (sin (v:y mouse-ang))
-                        (cos (v:x mouse-ang))))))
+  (setf mouse-ang (v2:+ (v! (/ (v:x moved) -150.0)
+                            (/ (v:y moved) -150.0))
+                        mouse-ang))
+  (setf (dir cam) (v! (sin (v:x mouse-ang))
+                      (sin (v:y mouse-ang))
+                      (cos (v:x mouse-ang)))))
 
 (let ((running nil))
   (defun run-loop ()
     (init)
     (setf running t)
     (format t "-starting-")
-    (skitter:whilst-listening-to ((#'mouse-callback (skitter:mouse 0) :pos))
+    (whilst-listening-to ((#'mouse-callback (mouse 0) :move))
       (loop :while running
          :do (continuable
                (update-repl-link)
