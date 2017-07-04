@@ -10,20 +10,20 @@
 ;; cepl will try work out the type. It does this by seeing if the
 ;; symbol is bound to a value, and if it is it checks the type of
 ;; the value for a suitable matching varjo type
-(defun-g calc-pos ((v-pos :vec4) (id :int))
+(defun-g calc-pos ((v-pos :vec4) (id :float))
   (let ((pos (v! (* (s~ v-pos :xyz) 0.3) 1.0)))
     (+ pos (let ((i (/ (+ (float id)) 2)))
              (v! (sin (+ i *loop*))
                  (cos (* 3 (+ (tan i) *loop*)))
                  0.0 0.0)))))
 
-(defun-g mtri-vert ((position :vec4) &uniform (i :int))
+(defun-g mtri-vert ((position :vec4) &uniform (i :float))
   (calc-pos position i))
 
 (defun-g mtri-frag ()
   (v! (cos *loop*) (sin *loop*) 0.4 1.0))
 
-(def-g-> prog-1 ()
+(defpipeline-g prog-1 ()
   (mtri-vert :vec4)
   (mtri-frag))
 

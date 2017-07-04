@@ -31,7 +31,7 @@
   (update-repl-link)
   (clear)
   (map-g #'ripple-with-wobble *v-stream*
-	 :tex *sampler* :count *count* :pos-offset (v! 0 0 0 0))
+         :tex *sampler* :count *count* :pos-offset (v! 0 0 0 0))
   (incf *count* 0.08)
   (swap))
 
