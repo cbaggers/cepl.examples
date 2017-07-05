@@ -73,17 +73,16 @@
   (setf (frame-size *camera*) dimensions)
   (map-g #'render-widgets nil :cam->clip (cam->clip *camera*) :world->cam (world->cam *camera*)))
 
-(defun window-size-callback (event &rest ignored)
+(defun window-size-callback (size &rest ignored)
   (declare (ignore ignored))
-  (reshape (skitter:size-2d-vec event)))
+  (reshape size))
 
 (let ((running nil))
   (defun run-loop ()
     (init)
     (reshape (current-viewport))
     (setf running t)
-    (skitter:whilst-listening-to
-        ((#'window-size-callback (skitter:window 0) :size))
+    (whilst-listening-to ((#'window-size-callback (window 0) :size))
       (loop :while (and running (not (shutting-down-p))) :do
          (continuable (step-demo)))))
 

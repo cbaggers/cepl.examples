@@ -47,7 +47,7 @@
   (setf *light* (make-instance 'light))
   (setf *camera* (make-camera))
   (setf *wibble* (load-model "./bird/bird.3ds"))
-  (setf *tex* (cepl.sdl2-image:load-image-to-texture "./bird/char_bird_col.png"))
+  (setf *tex* (dirt:load-image-to-texture "./bird/char_bird_col.png"))
   (setf *pos-tex* (make-texture nil :dimensions 1000
                                 :element-type :rgba32f
                                 :buffer-storage t))
@@ -120,12 +120,11 @@
 ;;--------------------------------------------------------------
 ;; controls
 
-(defun mouse-callback (event &rest ignored)
+(defun mouse-callback (moved &rest ignored)
   (declare (ignore ignored))
-  (let ((d (skitter:xy-pos-relative event)))
-    (setf (rot *wibble*) (v:+ (rot *wibble*) (v! (/ (v:y d) -100.0)
-                                                 (/ (v:x d) -100.0)
-                                                 0.0)))))
+  (setf (rot *wibble*) (v:+ (rot *wibble*) (v! (/ (v:y moved) -100.0)
+                                               (/ (v:x moved) -100.0)
+                                               0.0))))
 
 ;;--------------------------------------------------------------
 ;; window
@@ -134,9 +133,9 @@
   (setf (frame-size *camera*) new-dimensions)
   (map-g #'instanced-birds nil :cam-to-clip (cam->clip *camera*)))
 
-(defun window-size-callback (event &rest ignored)
+(defun window-size-callback (size &rest ignored)
   (declare (ignore ignored))
-  (reshape (skitter:size-2d-vec event)))
+  (reshape size))
 
 ;;--------------------------------------------------------------
 ;; main loop
@@ -145,9 +144,8 @@
   (defun run-loop ()
     (init)
     (setf running t)
-    (skitter:whilst-listening-to
-        ((#'window-size-callback (skitter:window 0) :size)
-         (#'mouse-callback (skitter:mouse 0) :pos))
+    (whilst-listening-to ((#'window-size-callback (window 0) :size)
+                          (#'mouse-callback (mouse 0) :move))
       (loop :while (and running (not (shutting-down-p))) :do
          (continuable
            (step-demo)

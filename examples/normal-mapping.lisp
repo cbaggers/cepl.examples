@@ -47,9 +47,9 @@
         (brick-dif-path  (merge-pathnames "./brick/col.png" *examples-dir*))
         (brick-norm-path  (merge-pathnames "./brick/norm.png" *examples-dir*)))
     (setf *wibble* (load-model wibble-path (v! pi 0 0)))
-    (setf *tex* (cepl.sdl2-image:load-image-to-texture brick-dif-path))
+    (setf *tex* (dirt:load-image-to-texture brick-dif-path))
     (setf *sampler* (sample *tex*))
-    (setf *normal-map* (cepl.sdl2-image:load-image-to-texture brick-norm-path))
+    (setf *normal-map* (dirt:load-image-to-texture brick-norm-path))
     (setf *normal-sampler* (sample *normal-map*))))
 
 ;;--------------------------------------------------------------
@@ -108,24 +108,23 @@
 ;;--------------------------------------------------------------
 ;; controls
 
-(defun mouse-callback (event &rest ignored)
+(defun mouse-callback (moved &rest ignored)
   (declare (ignore ignored))
-  (when (skitter:mouse-down-p mouse.left)
-    (let ((d (skitter:xy-pos-relative event)))
-      (cond
-        ;; move in z axis
-        ((skitter:key-down-p key.lshift)
-         (setf (pos *wibble*)
-               (v3:+ (pos *wibble*) (v! 0 0 (/ (v:y d) 100.0)))))
-        ;; move in y axis
-        ((skitter:key-down-p key.lctrl)
-         (setf (pos *wibble*)
-               (v3:+ (pos *wibble*) (v! 0 (/ (v:y d) -100.0) 0))))
-        ;; rotate
-        (t (setf (rot *wibble*)
-                 (v:+ (rot *wibble*) (v! (/ (v:y d) -100.0)
-                                         (/ (v:x d) -100.0)
-                                         0.0))))))))
+  (when (mouse-down-p mouse.left )
+    (cond
+      ;; move in z axis
+      ((key-down-p key.lshift)
+       (setf (pos *wibble*)
+             (v3:+ (pos *wibble*) (v! 0 0 (/ (v:y moved) 100.0)))))
+      ;; move in y axis
+      ((key-down-p key.lctrl)
+       (setf (pos *wibble*)
+             (v3:+ (pos *wibble*) (v! 0 (/ (v:y moved) -100.0) 0))))
+      ;; rotate
+      (t (setf (rot *wibble*)
+               (v:+ (rot *wibble*) (v! (/ (v:y moved) -100.0)
+                                       (/ (v:x moved) -100.0)
+                                       0.0)))))))
 
 ;;--------------------------------------------------------------
 ;; window
@@ -134,9 +133,9 @@
   (setf (frame-size *camera*) new-dimensions)
   (map-g #'frag-point-light nil :cam-to-clip (cam->clip *camera*)))
 
-(defun window-size-callback (event &rest ignored)
+(defun window-size-callback (size &rest ignored)
   (declare (ignore ignored))
-  (reshape (skitter:size-2d-vec event)))
+  (reshape size))
 
 ;;--------------------------------------------------------------
 ;; main loop
@@ -145,9 +144,8 @@
   (defun run-loop ()
     (init)
     (setf running t)
-    (skitter:whilst-listening-to
-        ((#'window-size-callback (skitter:window 0) :size)
-         (#'mouse-callback (skitter:mouse 0) :pos))
+    (whilst-listening-to ((#'window-size-callback (window 0) :size)
+                          (#'mouse-callback (mouse 0) :move))
       (loop :while (and running (not (shutting-down-p))) :do
          (continuable
            (step-demo)

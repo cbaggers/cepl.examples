@@ -35,7 +35,7 @@
           (pos vert)))
 
 (defun-g sphere-tess-con ((position (:vec3 3)))
-  (declare (varjo::output-patch :vertices 3))
+  (declare (output-patch :vertices 3))
   (let ((tess-level-inner 5f0)
         (tess-level-outer 5f0))
     (when (= gl-invocation-id 0)
@@ -81,7 +81,7 @@
           (aref patch-distance 2)
           facet-normal
           (v! 0 0 1))
-    (varjo-lang::end-primitive)
+    (end-primitive)
     (values)))
 
 (defun-g sphere-frag ((patch-distance :vec3) (facet-normal :vec3)
@@ -135,7 +135,7 @@
                          (make-gpu-array d :element-type 'g-pnt)
                          :index-array (make-gpu-array i :element-type :ushort))
           brick (sample
-                 (cepl.sdl2-image:load-image-to-texture
+                 (dirt:load-image-to-texture
                   (merge-pathnames "brick/col.png" *examples-dir*))))))
 
 (let ((running nil))

@@ -35,7 +35,7 @@
                                         (list (v! -0.5 -0.36 0) (v! 0 -1)))
                                   :element-type 'g-pt)
                   :retain-arrays t)
-        *tex* (cepl.sdl2-image:load-image-to-texture
+        *tex* (dirt:load-image-to-texture
                (merge-pathnames "brick/col.png" *examples-dir*))
         *sam* (sample *tex*)
         *sam2* (sample *tex* :wrap :clamp-to-edge))

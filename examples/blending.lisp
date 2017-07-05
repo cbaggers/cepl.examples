@@ -70,7 +70,7 @@
           box-index (make-gpu-array i :element-type :ushort)
           box-stream (make-buffer-stream box-data :index-array box-index)
           brick (sample
-                 (cepl.sdl2-image:load-image-to-texture
+                 (dirt:load-image-to-texture
                   (merge-pathnames "brick/col.png" *examples-dir*))))))
 
 (let ((running t))

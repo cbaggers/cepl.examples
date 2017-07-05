@@ -59,11 +59,11 @@
                              0 (v! pi 0 0)))
   (setf (v:z (pos *wibble*)) -3.0)
   (setf *bird* (load-model (merge-pathnames "bird/bird.3ds" *examples-dir*) 1 (v! pi 0 0)))
-  (setf *bird-tex* (cepl.sdl2-image:load-image-to-texture
+  (setf *bird-tex* (dirt:load-image-to-texture
                     (merge-pathnames "water.jpg" *examples-dir*)))
-  (setf *bird-tex2* (cepl.sdl2-image:load-image-to-texture
+  (setf *bird-tex2* (dirt:load-image-to-texture
                      (merge-pathnames "bird/char_bird_col.png" *examples-dir*)))
-  (setf *wib-tex* (cepl.sdl2-image:load-image-to-texture
+  (setf *wib-tex* (dirt:load-image-to-texture
                    (merge-pathnames "brick/col.png" *examples-dir*)))
   (setf *bird-sampler* (sample *bird-tex*))
   (setf *bird-sampler2* (sample *bird-tex2*))
@@ -166,24 +166,23 @@
 ;;--------------------------------------------------------------
 ;; controls
 
-(defun mouse-callback (event &rest ignored)
+(defun mouse-callback (moved &rest ignored)
   (declare (ignore ignored))
-  (when (skitter:mouse-down-p mouse.left)
-    (let ((d (skitter:xy-pos-relative event)))
-      (cond
-        ;; move in z axis
-        ((skitter:key-down-p key.lshift)
-         (setf (pos *bird*)
-               (v3:+ (pos *bird*) (v! 0 0 (/ (v:y d) 100.0)))))
-        ;; move in y axis
-        ((skitter:key-down-p key.lctrl)
-         (setf (pos *bird*)
-               (v3:+ (pos *bird*) (v! 0 (/ (v:y d) -100.0) 0))))
-        ;; rotate
-        (t (setf (rot *bird*)
-                 (v3:+ (rot *bird*) (v! (/ (v:y d) -100.0)
-                                        (/ (v:x d) -100.0)
-                                        0.0))))))))
+  (when (mouse-down-p mouse.left)
+    (cond
+      ;; move in z axis
+      ((key-down-p key.lshift)
+       (setf (pos *bird*)
+             (v3:+ (pos *bird*) (v! 0 0 (/ (v:y moved) 100.0)))))
+      ;; move in y axis
+      ((key-down-p key.lctrl)
+       (setf (pos *bird*)
+             (v3:+ (pos *bird*) (v! 0 (/ (v:y moved) -100.0) 0))))
+      ;; rotate
+      (t (setf (rot *bird*)
+               (v3:+ (rot *bird*) (v! (/ (v:y moved) -100.0)
+                                      (/ (v:x moved) -100.0)
+                                      0.0)))))))
 
 ;;--------------------------------------------------------------
 ;; window
@@ -193,9 +192,9 @@
   (map-g #'standard-pass nil :cam-to-clip (cam->clip *camera*))
   (map-g #'refract-pass nil :cam-to-clip (cam->clip *camera*)))
 
-(defun window-size-callback (event &rest ignored)
+(defun window-size-callback (size &rest ignored)
   (declare (ignore ignored))
-  (reshape (skitter:size-2d-vec event)))
+  (reshape size))
 
 ;;--------------------------------------------------------------
 ;; main loop
@@ -204,9 +203,8 @@
   (defun run-loop ()
     (init)
     (setf running t)
-    (skitter:whilst-listening-to
-        ((#'window-size-callback (skitter:window 0) :size)
-         (#'mouse-callback (skitter:mouse 0) :pos))
+    (whilst-listening-to ((#'window-size-callback (window 0) :size)
+                          (#'mouse-callback (mouse 0) :move))
       (loop :while (and running (not (shutting-down-p))) :do
          (continuable
            (step-demo)
