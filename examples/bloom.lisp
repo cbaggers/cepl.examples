@@ -22,6 +22,20 @@
 
 ;;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+(defvar fbos nil)
+
+(defstruct fbos
+  c0 sc0
+  c1 sc1
+  c2 sc2
+  c3 sc3
+  h0 sh0
+  h1 sh1
+  h2 sh2
+  h3 sh3)
+
+;;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 (defun-g passthrough-frag ((tc :vec2) &uniform (tex :sampler-2d))
   (texture tex tc))
 
@@ -55,24 +69,6 @@
   (fourtex :vec2))
 
 ;;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-(defvar* fbos
-  (c0 (make-fbo '(0 :dimensions (512 512))))
-  (sc0 (sample (attachment-tex c0 0)))
-  (c1 (make-fbo '(0 :dimensions (256 256))))
-  (sc1 (sample (attachment-tex c1 0)))
-  (c2 (make-fbo '(0 :dimensions (128 128))))
-  (sc2 (sample (attachment-tex c2 0)))
-  (c3 (make-fbo '(0 :dimensions (64 64))))
-  (sc3 (sample (attachment-tex c3 0)))
-  (h0 (make-fbo '(0 :dimensions (512 512))))
-  (sh0 (sample (attachment-tex h0 0)))
-  (h1 (make-fbo '(0 :dimensions (256 256))))
-  (sh1 (sample (attachment-tex h1 0)))
-  (h2 (make-fbo '(0 :dimensions (128 128))))
-  (sh2 (sample (attachment-tex h2 0)))
-  (h3 (make-fbo '(0 :dimensions (64 64))))
-  (sh3 (sample (attachment-tex h3 0))))
 
 (defun bloom (stream sx)
   (map-g-into (fbos-c0 fbos) #'blit stream :tex sx)
@@ -109,14 +105,45 @@
   (swap))
 
 ;;-------------------------------------------------------
+
+(defun init ()
+  (unless fbos
+    (let* ((c0 (make-fbo '(0 :dimensions (512 512))))
+           (sc0 (sample (attachment-tex c0 0)))
+           (c1 (make-fbo '(0 :dimensions (256 256))))
+           (sc1 (sample (attachment-tex c1 0)))
+           (c2 (make-fbo '(0 :dimensions (128 128))))
+           (sc2 (sample (attachment-tex c2 0)))
+           (c3 (make-fbo '(0 :dimensions (64 64))))
+           (sc3 (sample (attachment-tex c3 0)))
+           (h0 (make-fbo '(0 :dimensions (512 512))))
+           (sh0 (sample (attachment-tex h0 0)))
+           (h1 (make-fbo '(0 :dimensions (256 256))))
+           (sh1 (sample (attachment-tex h1 0)))
+           (h2 (make-fbo '(0 :dimensions (128 128))))
+           (sh2 (sample (attachment-tex h2 0)))
+           (h3 (make-fbo '(0 :dimensions (64 64))))
+           (sh3 (sample (attachment-tex h3 0))))
+      (setf fbos (make-fbos :c0 c0 :sc0 sc0
+                            :c1 c1 :sc1 sc1
+                            :c2 c2 :sc2 sc2
+                            :c3 c3 :sc3 sc3
+                            :h0 h0 :sh0 sh0
+                            :h1 h1 :sh1 sh1
+                            :h2 h2 :sh2 sh2
+                            :h3 h3 :sh3 sh3))))
+  (unless cols
+    (setf cols (dirt:load-image-to-texture
+                (merge-pathnames "ThickCloudsWater/front.png" *examples-dir*)))
+    (setf cols-sampler (sample cols))))
+
+;;-------------------------------------------------------
+
 (defparameter *running* nil)
 
 (defun run-loop ()
   (setf *running* t)
-  (unless cols
-    (setf cols (dirt:load-image-to-texture
-                (merge-pathnames "ThickCloudsWater/front.png" *examples-dir*)))
-    (setf cols-sampler (sample cols)))
+  (init)
   (loop :while *running* :do (continuable (step-demo))))
 
 (defun stop-loop ()
