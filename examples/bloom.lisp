@@ -1,21 +1,10 @@
 (in-package :cepl.examples)
 
+(defparameter *loop* 0)
 (defparameter cols nil)
 (defparameter cols-sampler nil)
-
-(defparameter *loop* 0)
-(defparameter *quad*
-  (make-gpu-array
-   (list (list (v! -1.0   1.0 0 0) (v!  0.0   1.0))
-         (list (v! -1.0  -1.0 0 0) (v!  0.0   0.0))
-         (list (v!  1.0  -1.0 0 0) (v!  1.0   0.0))
-         (list (v! -1.0   1.0 0 0) (v!  0.0   1.0))
-         (list (v!  1.0  -1.0 0 0) (v!  1.0   0.0))
-         (list (v!  1.0   1.0 0 0) (v!  1.0   1.0)))
-   :element-type 'g-pt
-   :dimensions 6))
-(defparameter *quad-stream*
-  (make-buffer-stream *quad* :retain-arrays t))
+(defparameter *quad* nil)
+(defparameter *quad-stream* nil)
 
 (defun-g passthrough-vert ((quad g-pt))
   (values (v! (pos quad) 1) (tex quad)))
@@ -107,6 +96,18 @@
 ;;-------------------------------------------------------
 
 (defun init ()
+  (unless *quad*
+    (setf *quad* (make-gpu-array
+                  (list (list (v! -1.0   1.0 0 0) (v!  0.0   1.0))
+                        (list (v! -1.0  -1.0 0 0) (v!  0.0   0.0))
+                        (list (v!  1.0  -1.0 0 0) (v!  1.0   0.0))
+                        (list (v! -1.0   1.0 0 0) (v!  0.0   1.0))
+                        (list (v!  1.0  -1.0 0 0) (v!  1.0   0.0))
+                        (list (v!  1.0   1.0 0 0) (v!  1.0   1.0)))
+                  :element-type 'g-pt
+                  :dimensions 6)))
+  (unless *quad-stream*
+    (setf *quad-stream* (make-buffer-stream *quad* :retain-arrays t)))
   (unless fbos
     (let* ((c0 (make-fbo '(0 :dimensions (512 512))))
            (sc0 (sample (attachment-tex c0 0)))
