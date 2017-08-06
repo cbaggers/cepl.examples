@@ -20,7 +20,7 @@
   (* 0.001 (get-internal-real-time)))
 
 (defun new-pos (current-pos i)
-  (v4:*s (v4:normalize current-pos)
+  (v3:*s (v3:normalize current-pos)
          (+ 0.1 (abs (sin (+ i (now)))))))
 
 (defun step-demo ()
