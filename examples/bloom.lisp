@@ -1,24 +1,27 @@
 (in-package :cepl.examples)
 
+(defparameter *loop* 0)
 (defparameter cols nil)
 (defparameter cols-sampler nil)
-
-(defparameter *loop* 0)
-(defparameter *quad*
-  (make-gpu-array
-   (list (list (v! -1.0   1.0 0 0) (v!  0.0   1.0))
-         (list (v! -1.0  -1.0 0 0) (v!  0.0   0.0))
-         (list (v!  1.0  -1.0 0 0) (v!  1.0   0.0))
-         (list (v! -1.0   1.0 0 0) (v!  0.0   1.0))
-         (list (v!  1.0  -1.0 0 0) (v!  1.0   0.0))
-         (list (v!  1.0   1.0 0 0) (v!  1.0   1.0)))
-   :element-type 'g-pt
-   :dimensions 6))
-(defparameter *quad-stream*
-  (make-buffer-stream *quad* :retain-arrays t))
+(defparameter *quad* nil)
+(defparameter *quad-stream* nil)
 
 (defun-g passthrough-vert ((quad g-pt))
   (values (v! (pos quad) 1) (tex quad)))
+
+;;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+(defvar fbos nil)
+
+(defstruct fbos
+  c0 sc0
+  c1 sc1
+  c2 sc2
+  c3 sc3
+  h0 sh0
+  h1 sh1
+  h2 sh2
+  h3 sh3)
 
 ;;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -56,24 +59,6 @@
 
 ;;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-(defvar* fbos
-  (c0 (make-fbo '(0 :dimensions (512 512))))
-  (sc0 (sample (attachment-tex c0 0)))
-  (c1 (make-fbo '(0 :dimensions (256 256))))
-  (sc1 (sample (attachment-tex c1 0)))
-  (c2 (make-fbo '(0 :dimensions (128 128))))
-  (sc2 (sample (attachment-tex c2 0)))
-  (c3 (make-fbo '(0 :dimensions (64 64))))
-  (sc3 (sample (attachment-tex c3 0)))
-  (h0 (make-fbo '(0 :dimensions (512 512))))
-  (sh0 (sample (attachment-tex h0 0)))
-  (h1 (make-fbo '(0 :dimensions (256 256))))
-  (sh1 (sample (attachment-tex h1 0)))
-  (h2 (make-fbo '(0 :dimensions (128 128))))
-  (sh2 (sample (attachment-tex h2 0)))
-  (h3 (make-fbo '(0 :dimensions (64 64))))
-  (sh3 (sample (attachment-tex h3 0))))
-
 (defun bloom (stream sx)
   (map-g-into (fbos-c0 fbos) #'blit stream :tex sx)
   (map-g-into (fbos-c1 fbos) #'blit stream :tex sx)
@@ -109,14 +94,57 @@
   (swap))
 
 ;;-------------------------------------------------------
+
+(defun init ()
+  (unless *quad*
+    (setf *quad* (make-gpu-array
+                  (list (list (v! -1.0   1.0 0 0) (v!  0.0   1.0))
+                        (list (v! -1.0  -1.0 0 0) (v!  0.0   0.0))
+                        (list (v!  1.0  -1.0 0 0) (v!  1.0   0.0))
+                        (list (v! -1.0   1.0 0 0) (v!  0.0   1.0))
+                        (list (v!  1.0  -1.0 0 0) (v!  1.0   0.0))
+                        (list (v!  1.0   1.0 0 0) (v!  1.0   1.0)))
+                  :element-type 'g-pt
+                  :dimensions 6)))
+  (unless *quad-stream*
+    (setf *quad-stream* (make-buffer-stream *quad* :retain-arrays t)))
+  (unless fbos
+    (let* ((c0 (make-fbo '(0 :dimensions (512 512))))
+           (sc0 (sample (attachment-tex c0 0)))
+           (c1 (make-fbo '(0 :dimensions (256 256))))
+           (sc1 (sample (attachment-tex c1 0)))
+           (c2 (make-fbo '(0 :dimensions (128 128))))
+           (sc2 (sample (attachment-tex c2 0)))
+           (c3 (make-fbo '(0 :dimensions (64 64))))
+           (sc3 (sample (attachment-tex c3 0)))
+           (h0 (make-fbo '(0 :dimensions (512 512))))
+           (sh0 (sample (attachment-tex h0 0)))
+           (h1 (make-fbo '(0 :dimensions (256 256))))
+           (sh1 (sample (attachment-tex h1 0)))
+           (h2 (make-fbo '(0 :dimensions (128 128))))
+           (sh2 (sample (attachment-tex h2 0)))
+           (h3 (make-fbo '(0 :dimensions (64 64))))
+           (sh3 (sample (attachment-tex h3 0))))
+      (setf fbos (make-fbos :c0 c0 :sc0 sc0
+                            :c1 c1 :sc1 sc1
+                            :c2 c2 :sc2 sc2
+                            :c3 c3 :sc3 sc3
+                            :h0 h0 :sh0 sh0
+                            :h1 h1 :sh1 sh1
+                            :h2 h2 :sh2 sh2
+                            :h3 h3 :sh3 sh3))))
+  (unless cols
+    (setf cols (dirt:load-image-to-texture
+                (merge-pathnames "ThickCloudsWater/front.png" *examples-dir*)))
+    (setf cols-sampler (sample cols))))
+
+;;-------------------------------------------------------
+
 (defparameter *running* nil)
 
 (defun run-loop ()
   (setf *running* t)
-  (unless cols
-    (setf cols (dirt:load-image-to-texture
-                (merge-pathnames "ThickCloudsWater/front.png" *examples-dir*)))
-    (setf cols-sampler (sample cols)))
+  (init)
   (loop :while *running* :do (continuable (step-demo))))
 
 (defun stop-loop ()

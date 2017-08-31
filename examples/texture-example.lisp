@@ -31,7 +31,7 @@
   (update-repl-link)
   (clear)
   (map-g #'ripple-with-wobble *v-stream*
-	 :tex *sampler* :count *count* :pos-offset (v! 0 0 0 0))
+         :tex *sampler* :count *count* :pos-offset (v! 0 0 0 0))
   (incf *count* 0.08)
   (swap))
 
@@ -47,7 +47,7 @@
                                (,(v!    0    0.5 0) ,(v!  0 -1)))
                              :dimensions 3 :element-type 'g-pt)
              :retain-arrays t))
-      (setf *texture* (with-c-array
+      (setf *texture* (with-c-array-freed
                           (temp (make-c-array img-data :dimensions '(64 64)
                                               :element-type :uint8))
                         (make-texture temp)))
