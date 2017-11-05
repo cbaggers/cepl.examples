@@ -101,7 +101,7 @@
   (defun run-loop ()
     (unless brick (init))
     (setf running t)
-    (cepl-utils:with-setf (depth-test-function *cepl-context*) #'<=
+    (cepl-utils:with-setf (depth-test-function) #'<=
       (loop :while (and running (not (shutting-down-p))) :do
          (continuable
            (step-host)
