@@ -1,10 +1,10 @@
 (in-package :cepl.examples)
 
-(defparameter *loop* 0)
-(defparameter cols nil)
-(defparameter cols-sampler nil)
-(defparameter *quad* nil)
-(defparameter *quad-stream* nil)
+(defvar *loop* 0)
+(defvar cols nil)
+(defvar cols-sampler nil)
+(defvar *quad* nil)
+(defvar *quad-stream* nil)
 
 (defun-g passthrough-vert ((quad g-pt))
   (values (v! (pos quad) 1) (tex quad)))
@@ -140,7 +140,7 @@
 
 ;;-------------------------------------------------------
 
-(defparameter *running* nil)
+(defvar *running* nil)
 
 (defun run-loop ()
   (setf *running* t)
