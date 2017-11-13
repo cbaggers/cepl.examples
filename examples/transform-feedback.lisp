@@ -1,7 +1,7 @@
 (in-package :cepl.examples)
 
 (defvar *running* nil)
-(defparameter *vertex-stream* nil)
+(defvar *vertex-stream* nil)
 (defvar *feedback-vec3* nil)
 (defvar *feedback-vec4* nil)
 (defvar *tfs* nil)
@@ -40,8 +40,8 @@
   (update-repl-link)
   (clear)
   (with-transform-feedback (*tfs*)
-    (map-g #'prog-1 *vertex-stream* :pos (v! -0.1 0)))
-  (map-g #'prog-1 *vertex-stream* :pos (v! 0.3 0.28))
+    (map-g #'prog-1 *vertex-stream* :pos (v! -0.1 0))
+    (map-g #'prog-1 *vertex-stream* :pos (v! 0.3 0.28)))
   (swap))
 
 
