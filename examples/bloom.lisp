@@ -28,7 +28,7 @@
 (defun-g passthrough-frag ((tc :vec2) &uniform (tex :sampler-2d))
   (texture tex tc))
 
-(def-g-> blit ()
+(defpipeline-g blit ()
   (passthrough-vert g-pt)
   (passthrough-frag :vec2))
 
@@ -39,7 +39,7 @@
      (* (texture tex tc) 0.375)
      (* (texture tex (+ tc offset)) 0.3125)))
 
-(def-g-> smooth ()
+(defpipeline-g smooth ()
   (passthrough-vert g-pt)
   (qkern :vec2))
 
@@ -53,7 +53,7 @@
        (* (texture t2 tc) scale-effect)
        (* (texture t3 tc) scale-effect))))
 
-(def-g-> combine ()
+(defpipeline-g combine ()
   (passthrough-vert g-pt)
   (fourtex :vec2))
 

@@ -78,7 +78,7 @@
     (+ (* t-col light-intensity cos-ang-incidence)
        (* t-col ambient-intensity))))
 
-(def-g-> frag-point-light ()
+(defpipeline-g frag-point-light ()
   (nm-vert g-pnt)
   (nm-frag :vec3 :vec3 :vec4 :vec2)
   :post #'reshape)

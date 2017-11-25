@@ -39,7 +39,7 @@
                       &uniform (tex :sampler-2d) (fac :float))
   (v! (s~ (texture tex (* tc 1)) :xyz) fac))
 
-(def-g-> draw-sphere ()
+(defpipeline-g draw-sphere ()
   :vertex (sphere-vert g-pnt)
   :fragment (sphere-frag :vec3 :vec2))
 
@@ -67,7 +67,7 @@
 (defun-g normals-frag ()
   (v! 1 1 0 1))
 
-(def-g-> draw-normals ()
+(defpipeline-g draw-normals ()
   :vertex (normals-vert g-pnt)
   :geometry (normals-geom (:vec3 3))
   :fragment (normals-frag))

@@ -88,7 +88,7 @@
     (+ (* t-col light-intensity cos-ang-incidence)
        (* t-col ambient-intensity))))
 
-(def-g-> instanced-birds ()
+(defpipeline-g instanced-birds ()
   (instance-vert g-pnt)
   (instance-frag :vec3 :vec3 :vec4 :vec2)
   :post #'reshape)

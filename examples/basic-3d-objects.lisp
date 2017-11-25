@@ -15,7 +15,7 @@
 (defun-g b3d-frag ((interp-color :vec4))
   interp-color)
 
-(def-g-> render-widgets ()
+(defpipeline-g render-widgets ()
   (b3d-vert g-pc)
   (b3d-frag :vec4))
 

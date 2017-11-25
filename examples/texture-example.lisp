@@ -23,7 +23,7 @@
     (+ (texture tex (+ rip-offset tex-coord))
        (v! (* -0.2 height) (* -0.2 height) 0.0 0.0))))
 
-(def-g-> ripple-with-wobble ()
+(defpipeline-g ripple-with-wobble ()
   (tex-vert g-pt) (tex-frag :vec2))
 
 (defun step-demo ()

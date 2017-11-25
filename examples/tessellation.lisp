@@ -107,7 +107,7 @@
                      (amplify d2 50 -0.5))))
       (v! color 1))))
 
-(def-g-> draw-sphere ((:patch 3))
+(defpipeline-g draw-sphere ((:patch 3))
   :vertex (sphere-vert g-pnt)
   :tessellation-control (sphere-tess-con (:vec3 3))
   :tessellation-evaluation (sphere-tess-eval (:vec3 3))

@@ -55,7 +55,7 @@
            (setf e (+ e (* eye-dir d)))))
     (v! output 1.0)))
 
-(def-g-> raymarcher ()
+(defpipeline-g raymarcher ()
   (ray-vert :vec4)
   (ray-frag :vec2))
 

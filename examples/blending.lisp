@@ -39,7 +39,7 @@
 (defun-g box-frag ((norm :vec3) (tc :vec2) &uniform (tex :sampler-2d) (fac :float))
   (v! (s~ (texture tex (* tc 1)) :xyz) fac))
 
-(def-g-> draw-box ()
+(defpipeline-g draw-box ()
   (box-vert g-pnt)
   (box-frag :vec3 :vec2))
 

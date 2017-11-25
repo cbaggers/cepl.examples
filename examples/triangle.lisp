@@ -15,7 +15,7 @@
 (defun-g tri-frag ((color :vec4))
   color)
 
-(def-g-> prog-1 ()
+(defpipeline-g prog-1 ()
   (tri-vert pos-col)
   (tri-frag :vec4))
 

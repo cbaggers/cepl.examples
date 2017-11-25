@@ -144,7 +144,7 @@
    }"
   (("out_color" :vec4)))
 
-(def-g-> draw-sphere ((:patch 3))
+(defpipeline-g draw-sphere ((:patch 3))
   :vertex (sphere-vert g-pnt)
   :tessellation-control (sphere-tess-con (:vec3 3))
   :tessellation-evaluation (sphere-tess-eval (:vec3 3))

@@ -12,7 +12,7 @@
 (defun-g sampling-frag ((tc :vec2) &uniform (tex :sampler-2d))
   (texture tex tc))
 
-(def-g-> sample-it ()
+(defpipeline-g sample-it ()
   (sampling-vert g-pt)
   (sampling-frag :vec2))
 

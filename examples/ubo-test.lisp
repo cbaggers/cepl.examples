@@ -15,7 +15,7 @@
 (defun-g ubo-frag ((color :vec4))
   color)
 
-(def-g-> draw-with-ubo ()
+(defpipeline-g draw-with-ubo ()
   (ubo-vert g-pc) (ubo-frag :vec4))
 
 (defun step-demo ()

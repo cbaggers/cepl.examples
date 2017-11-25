@@ -35,7 +35,7 @@
 
 ;;----------------------------------------------------------------------
 
-(def-g-> prog-1 ()
+(defpipeline-g prog-1 ()
   (simple-vert pos-col)
   (frag-glsl :vec4))
 

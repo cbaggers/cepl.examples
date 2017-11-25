@@ -12,7 +12,7 @@
 (defun-g cube-frag ((tc :vec3) &uniform (tex :sampler-cube))
   (texture tex tc))
 
-(def-g-> skybox () (cube-vert :vec3) (cube-frag :vec3))
+(defpipeline-g skybox () (cube-vert :vec3) (cube-frag :vec3))
 
 (defun make-cubemap-tex (&rest paths)
   (with-c-arrays-freed (ca (mapcar (lambda (p)

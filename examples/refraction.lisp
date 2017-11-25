@@ -113,12 +113,12 @@
          (r (* (texture bird-tex (* (v! 1 -1) tex-coord)) 0.1)))
     (+ r c)))
 
-(def-g-> standard-pass ()
+(defpipeline-g standard-pass ()
   (standard-vert g-pnt)
   (standard-frag :vec3 :vec3 :vec4 :vec2)
   :post #'reshape)
 
-(def-g-> refract-pass ()
+(defpipeline-g refract-pass ()
   (refract-vert g-pnt)
   (refract-frag :vec2)
   :post #'reshape)
