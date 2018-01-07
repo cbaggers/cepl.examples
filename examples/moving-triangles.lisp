@@ -17,15 +17,14 @@
                  (cos (* 3 (+ (tan i) *loop*)))
                  0.0 0.0)))))
 
-(defun-g mtri-vert ((position :vec4) &uniform (i :float))
-  (calc-pos position i))
-
-(defun-g mtri-frag ()
-  (v! (cos *loop*) (sin *loop*) 0.4 1.0))
-
+;; Also showing that we can use gpu-lambdas inline in defpipeline-g
+;; It's not usually done as reusable functions are generally nicer
+;; but I wanted to show that it was possible :)
 (defpipeline-g prog-1 ()
-  (mtri-vert :vec4)
-  (mtri-frag))
+  (lambda-g ((position :vec4) &uniform (i :float))
+    (calc-pos position i))
+  (lambda-g ()
+    (v! (cos *loop*) (sin *loop*) 0.4 1.0)))
 
 (defun step-demo ()
   (step-host)

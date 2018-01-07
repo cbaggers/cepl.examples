@@ -80,7 +80,7 @@
 (let ((running nil))
   (defun run-loop ()
     (init)
-    (reshape (current-viewport))
+    (reshape (frame-size *camera*))
     (setf running t)
     (whilst-listening-to ((#'window-size-callback (window 0) :size))
       (loop :while (and running (not (shutting-down-p))) :do
