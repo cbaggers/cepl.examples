@@ -3,11 +3,11 @@
 ;; helper packages
 
 (uiop:define-package #:cepl.examples.misc
-  (:use #:cl #:cepl)
+  (:use #:cl #:cepl #:rtg-math)
   (:export :*examples-dir*))
 
 (uiop:define-package #:cepl.examples.camera
-  (:use #:cl #:cepl #:vari)
+  (:use #:cl #:cepl #:vari #:rtg-math)
   (:export :camera
            :make-camera
            :orthographic-projection
@@ -28,7 +28,7 @@
            :make-cam-clip-matrix))
 
 (uiop:define-package :cepl.examples.model-parsers
-  (:use :cl :cepl)
+  (:use :cl :cepl #:rtg-math)
   (:export :load-file
            :meshes->lists
            :mesh->lists
@@ -38,7 +38,7 @@
            :calc-type))
 
 (uiop:define-package :cepl.examples.meshes
-  (:use :cl :cffi :split-sequence :cepl)
+  (:use :cl :cffi :split-sequence :cepl #:rtg-math)
   (:export :mesh
            :vertices
            :indicies
@@ -54,14 +54,16 @@
   (:use #:cl #:cepl #:cepl.examples.misc
         #:rtg-math #:vari #:livesupport
         #:cepl.skitter
-        #:temporal-functions))
+        #:temporal-functions
+        #:rtg-math))
 
 (uiop:define-package #:cepl.examples+camera
   (:use #:cl #:cepl #:cepl.examples.camera
         #:cepl.examples.misc
         #:rtg-math #:vari #:livesupport
         #:cepl.skitter
-        #:temporal-functions))
+        #:temporal-functions
+        #:rtg-math))
 
 (uiop:define-package #:cepl.examples+physics
   (:use #:cl #:cepl #:cepl.examples.camera

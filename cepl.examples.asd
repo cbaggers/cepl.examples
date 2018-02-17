@@ -6,9 +6,11 @@
   :license "GPL V3"
   #+asdf-unicode :encoding #+asdf-unicode :utf-8
   :serial t
-  :depends-on (#:cepl.sdl2 #:dendrite #:skitter #:cepl.skitter.sdl2
-                           #:livesupport #:classimp #:split-sequence
-                           #:dirt #:temporal-functions)
+  :depends-on (#:cepl.sdl2
+               #:rtg-math #:rtg-math.vari
+               #:dendrite #:skitter #:cepl.skitter.sdl2
+               #:livesupport #:classimp #:split-sequence
+               #:dirt #:temporal-functions)
   :components ((:file "package")
                (:file "examples/helpers/examples-data")
                (:file "examples/helpers/camera")
