@@ -13,6 +13,7 @@
                          :cepl.examples (format nil "examples/~a" path)))))
              (compile-file path)
              (load path))
+           (print "----------------------------------------------------------")
            (print "starting")
            (let ((std-o *standard-output*))
              (bt:make-thread
