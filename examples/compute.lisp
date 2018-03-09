@@ -38,9 +38,12 @@
 (defun run-loop ()
   (setf *running* t)
   (init)
-  (loop :while (and *running* (not (shutting-down-p)))
-     :for modifier :from 0
-     :do (continuable (step-example modifier))))
+  (unwind-protect
+       (loop :while (and *running* (not (shutting-down-p)))
+          :for modifier :from 1 :do
+          (update-repl-link)
+          (continuable (step-example modifier)))
+    (setf *running* nil)))
 
 (defun stop-loop ()
   (setf *running* nil))
