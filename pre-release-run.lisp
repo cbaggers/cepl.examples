@@ -14,6 +14,7 @@
              (compile-file path)
              (load path))
            (print "----------------------------------------------------------")
+           (print path)
            (print "starting")
            (let ((std-o *standard-output*))
              (bt:make-thread
