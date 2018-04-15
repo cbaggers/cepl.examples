@@ -10,7 +10,7 @@
                #:rtg-math #:rtg-math.vari
                #:dendrite #:skitter #:cepl.skitter.sdl2
                #:livesupport #:classimp #:split-sequence
-               #:dirt #:temporal-functions)
+               #:dirt #:temporal-functions #:with-setf)
   :components ((:file "package")
                (:file "examples/helpers/examples-data")
                (:file "examples/helpers/camera")

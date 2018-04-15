@@ -55,7 +55,7 @@
         #:rtg-math #:vari #:livesupport
         #:cepl.skitter
         #:temporal-functions
-        #:rtg-math))
+        #:rtg-math #:with-setf))
 
 (uiop:define-package #:cepl.examples+camera
   (:use #:cl #:cepl #:cepl.examples.camera
@@ -63,7 +63,7 @@
         #:rtg-math #:vari #:livesupport
         #:cepl.skitter
         #:temporal-functions
-        #:rtg-math))
+        #:rtg-math #:with-setf))
 
 (uiop:define-package #:cepl.examples+physics
   (:use #:cl #:cepl #:cepl.examples.camera
@@ -71,4 +71,4 @@
         #:rtg-math #:vari #:livesupport
         #:cepl.skitter
         #:temporal-functions
-        #:cffi))
+        #:cffi #:with-setf))

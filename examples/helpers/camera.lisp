@@ -23,7 +23,7 @@
 
 (defclass camera ()
   ((cam->clip :type (simple-array single-float (16)) :reader cam->clip)
-   (viewport :initform (make-viewport '(640 480)) :initarg :viewport :reader cam-viewport)
+   (viewport :initform (make-viewport '(800 600)) :initarg :viewport :reader cam-viewport)
    (near :type single-float :reader near :initarg :near)
    (far :type single-float :reader far :initarg :far)
    (fov :type single-float :reader fov :initarg :fov)))
