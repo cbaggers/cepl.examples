@@ -64,7 +64,7 @@
   (declare (output-primitive :kind :triangle-strip
                              :max-vertices 3))
   (let* ((a (- (aref position 2) (aref position 0)))
-         (b (- (aref position 2) (aref position 0)))
+         (b (- (aref position 1) (aref position 0)))
          (facet-normal (* normal-mat (normalize (cross a b)))))
     (emit ()
           (gl-position (aref gl-in 0))
