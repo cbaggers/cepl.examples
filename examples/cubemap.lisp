@@ -28,7 +28,7 @@
                              "ThickCloudsWater/down.png"
                              "ThickCloudsWater/front.png"
                              "ThickCloudsWater/back.png"))
-  (setf sampler (sample tx))
+  (setf sampler (sample tx :wrap :clamp-to-edge))
   (let* ((bx (dendrite.primitives:box-data))
          (data (make-gpu-array (first bx) :element-type 'g-pnt))
          (ind (make-gpu-array (dendrite.primitives:swap-winding-order (second bx))
