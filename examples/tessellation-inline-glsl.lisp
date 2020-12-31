@@ -43,8 +43,8 @@
 
    void main()
    {
-       float TessLevelInner = 5f;
-       float TessLevelOuter = 5f;
+       float TessLevelInner = 5.0f;
+       float TessLevelOuter = 5.0f;
 
        v_out[gl_InvocationID].pos = v_in[gl_InvocationID].position;
        if (gl_InvocationID == 0) {
